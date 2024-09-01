@@ -14,7 +14,7 @@ A modern, responsive weather application built with Next.js, TypeScript, and sty
 
 - Next.js 13+ (App Router)
 - TypeScript
-- styled-components
+- Styled-components
 - SWR
 - OpenWeatherMap API
 
