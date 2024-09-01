@@ -1,15 +1,12 @@
 "use client";
 
-import { useState, KeyboardEvent, useEffect } from "react";
+import { useState, useEffect, Suspense } from "react";
+import { useSearchParams } from "next/navigation";
 import useGetWeatherByCityName from "./hooks/useGetWeatherByCityName";
 import Weather from "./components/Weather/Weather";
-
-import { useSearchParams } from "next/navigation";
-
 import Card from "./ui/Card/Card";
 import Input from "./ui/Input/Input";
 import Button from "./ui/Button/Button";
-
 import {
   Container,
   Title,
@@ -17,22 +14,36 @@ import {
   DynamicBackground,
 } from "./ui/CommonStyled";
 
+function SearchParamsHandler({
+  onCityChange,
+}: {
+  onCityChange: (city: string) => void;
+}) {
+  const searchParams = useSearchParams();
+
+  useEffect(() => {
+    const cityParam = searchParams.get("city");
+    if (cityParam) {
+      onCityChange(cityParam);
+    }
+  }, [searchParams, onCityChange]);
+
+  return null;
+}
+
 export default function Home() {
   const [city, setCity] = useState("");
   const [fetchCity, setFetchCity] = useState("");
-  const searchParams = useSearchParams();
   const {
     data: weatherData,
     error,
     isValidating,
   } = useGetWeatherByCityName(fetchCity);
-  useEffect(() => {
-    const cityParam = searchParams.get("city");
-    if (cityParam) {
-      setCity(cityParam);
-      setFetchCity(cityParam);
-    }
-  }, [searchParams]);
+
+  const handleCityChange = (newCity: string) => {
+    setCity(newCity);
+    setFetchCity(newCity);
+  };
 
   const handleSearch = () => {
     if (city.trim()) {
@@ -42,7 +53,7 @@ export default function Home() {
     }
   };
 
-  const handleKeyPress = (event: KeyboardEvent<HTMLInputElement>) => {
+  const handleKeyPress = (event: React.KeyboardEvent<HTMLInputElement>) => {
     if (event.key === "Enter") {
       handleSearch();
     }
@@ -78,6 +89,9 @@ export default function Home() {
           />
         </Card>
       </Container>
+      <Suspense fallback={null}>
+        <SearchParamsHandler onCityChange={handleCityChange} />
+      </Suspense>
     </DynamicBackground>
   );
 }
