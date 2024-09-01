@@ -1,7 +1,6 @@
 "use client";
 
-import { useState, useEffect, Suspense } from "react";
-import { useSearchParams } from "next/navigation";
+import { useState, Suspense } from "react";
 import useGetWeatherByCityName from "./hooks/useGetWeatherByCityName";
 import Weather from "./components/Weather/Weather";
 import Card from "./ui/Card/Card";
@@ -14,22 +13,7 @@ import {
   DynamicBackground,
 } from "./ui/CommonStyled";
 
-function SearchParamsHandler({
-  onCityChange,
-}: {
-  onCityChange: (city: string) => void;
-}) {
-  const searchParams = useSearchParams();
-
-  useEffect(() => {
-    const cityParam = searchParams.get("city");
-    if (cityParam) {
-      onCityChange(cityParam);
-    }
-  }, [searchParams, onCityChange]);
-
-  return null;
-}
+import SearchParamsHandler from "./components/SearchParamsHandler";
 
 export default function Home() {
   const [city, setCity] = useState("");
@@ -42,13 +26,11 @@ export default function Home() {
 
   const handleCityChange = (newCity: string) => {
     setCity(newCity);
-    setFetchCity(newCity);
   };
 
   const handleSearch = () => {
     if (city.trim()) {
       setFetchCity(city);
-      setCity("");
       window.history.pushState({}, "", `?city=${encodeURIComponent(city)}`);
     }
   };
@@ -71,7 +53,7 @@ export default function Home() {
               type="text"
               placeholder="Enter city name"
               value={city}
-              onChange={(e) => setCity(e.target.value)}
+              onChange={(e) => handleCityChange(e.target.value)}
               onKeyPress={handleKeyPress}
             />
             <Button
@@ -90,7 +72,7 @@ export default function Home() {
         </Card>
       </Container>
       <Suspense fallback={null}>
-        <SearchParamsHandler onCityChange={handleCityChange} />
+        <SearchParamsHandler onCityChange={setFetchCity} />
       </Suspense>
     </DynamicBackground>
   );
