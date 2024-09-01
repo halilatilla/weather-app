@@ -1,4 +1,4 @@
-# **Weather App**
+[**Weather App** 🔗](https://weather-app-halil-atilla.vercel.app/)
 
 A modern, responsive weather application built with Next.js, TypeScript, and styled-components. This app allows users to search for weather information by city name and displays current weather conditions.
 
@@ -63,3 +63,7 @@ To build the app for production:
 npm run build
 npm start
 ```
+
+
+![Preview](https://github.com/user-attachments/assets/6ecca1d6-a09f-451c-84eb-2f9900d01689)
+
