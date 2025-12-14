@@ -3,7 +3,6 @@
 import { useState, Suspense } from "react";
 import useGetWeatherByCityName from "./hooks/useGetWeatherByCityName";
 import Weather from "./components/Weather/Weather";
-import Card from "./ui/Card/Card";
 import Input from "./ui/Input/Input";
 import Button from "./ui/Button/Button";
 import {
@@ -11,6 +10,12 @@ import {
   Title,
   SearchContainer,
   DynamicBackground,
+  WindowTitleBar,
+  WindowTitle,
+  WindowButtons,
+  WindowButton,
+  WindowContent,
+  RetroStripe,
 } from "./ui/CommonStyled";
 
 import SearchParamsHandler from "./components/SearchParamsHandler";
@@ -44,14 +49,23 @@ export default function Home() {
   const weatherCondition = weatherData?.weather[0]?.main || "default";
 
   return (
-    <DynamicBackground weatherCondition={weatherCondition}>
+    <DynamicBackground $weatherCondition={weatherCondition}>
       <Container>
-        <Card>
+        <WindowTitleBar>
+          <WindowTitle>⛅ WEATHER.EXE</WindowTitle>
+          <WindowButtons>
+            <WindowButton>_</WindowButton>
+            <WindowButton>□</WindowButton>
+            <WindowButton>×</WindowButton>
+          </WindowButtons>
+        </WindowTitleBar>
+        <WindowContent>
           <Title>Weather App</Title>
+          <RetroStripe />
           <SearchContainer>
             <Input
               type="text"
-              placeholder="Enter city name"
+              placeholder="ENTER CITY NAME..."
               value={city}
               onChange={(e) => handleCityChange(e.target.value)}
               onKeyPress={handleKeyPress}
@@ -60,16 +74,16 @@ export default function Home() {
               onClick={handleSearch}
               disabled={!city.trim() || isValidating}
             >
-              {isValidating ? "Searching..." : "Search"}
+              {isValidating ? "LOADING..." : "SEARCH"}
             </Button>
           </SearchContainer>
 
           <Weather
             weatherData={weatherData}
-            error={error ? "Failed to fetch weather data" : null}
+            error={error ? "ERROR: CITY NOT FOUND" : null}
             loading={isValidating}
           />
-        </Card>
+        </WindowContent>
       </Container>
       <Suspense fallback={null}>
         <SearchParamsHandler onCityChange={setFetchCity} />
