@@ -2,7 +2,8 @@
 
 A retro 90s-themed weather application built with Next.js, TypeScript, and styled-components. This app brings back the nostalgia of Windows 95 era computing while providing real-time weather information — now featuring an AI-powered weather announcer!
 
-<img width="1950" height="1317" alt="CleanShot 2025-12-14 at 14 35 47" src="https://github.com/user-attachments/assets/03680610-4786-474a-9604-7d044aa214bf" />
+<img width="2115" height="1358" alt="CleanShot 2025-12-14 at 21 13 39" src="https://github.com/user-attachments/assets/3db75522-6a48-4c3c-86c5-acaa1e84f7b0" />
+
 
 ## **Features**
 
