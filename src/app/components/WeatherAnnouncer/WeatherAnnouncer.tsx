@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useMemo, useState, useEffect, useRef } from "react";
 import {
   StudioContainer,
   ToggleButton,
@@ -56,6 +56,43 @@ interface WeatherAnnouncerProps {
   loading?: boolean;
   isCelsius?: boolean;
 }
+
+// Custom hook for typewriter effect
+const useTypewriter = (text: string | null, speed: number = 30) => {
+  const [displayedText, setDisplayedText] = useState("");
+  const [isTyping, setIsTyping] = useState(false);
+  const previousTextRef = useRef<string | null>(null);
+
+  useEffect(() => {
+    // Reset when text changes
+    if (text !== previousTextRef.current) {
+      previousTextRef.current = text;
+      setDisplayedText("");
+      
+      if (!text) {
+        setIsTyping(false);
+        return;
+      }
+
+      setIsTyping(true);
+      let currentIndex = 0;
+
+      const typeInterval = setInterval(() => {
+        if (currentIndex < text.length) {
+          setDisplayedText(text.slice(0, currentIndex + 1));
+          currentIndex++;
+        } else {
+          setIsTyping(false);
+          clearInterval(typeInterval);
+        }
+      }, speed);
+
+      return () => clearInterval(typeInterval);
+    }
+  }, [text, speed]);
+
+  return { displayedText, isTyping };
+};
 
 // Get weather emoji based on condition
 const getWeatherEmoji = (condition: string): string => {
@@ -148,6 +185,9 @@ export default function WeatherAnnouncer({
     return generateAnnouncement(weatherData, isCelsius);
   }, [weatherData, isCelsius]);
 
+  // Typewriter effect for the announcement
+  const { displayedText, isTyping } = useTypewriter(announcement, 35);
+
   const weatherEmoji = useMemo(() => {
     if (!weatherData) return "🌤️";
     return getWeatherEmoji(weatherData.weather[0]?.main || "");
@@ -164,6 +204,9 @@ export default function WeatherAnnouncer({
   const toggleMinimize = () => {
     setIsMinimized(!isMinimized);
   };
+
+  // Character talks while typing or loading
+  const isTalking = isTyping || loading;
 
   return (
     <StudioContainer $isMinimized={isMinimized}>
@@ -196,7 +239,7 @@ export default function WeatherAnnouncer({
           <CharacterContainer>
             <PixelCharacter>
               <Head>
-                <Face />
+                <Face $isTalking={isTalking} />
               </Head>
               <Body />
               <Tie />
@@ -228,14 +271,14 @@ export default function WeatherAnnouncer({
                   <WeatherEmoji>{weatherEmoji}</WeatherEmoji>
                   WEATHER REPORT
                 </BubbleHeader>
-                <BubbleText>
+                <BubbleText $isTyping={isTyping}>
                   {loading ? (
                     <>
                       LOADING FORECAST
                       <LoadingText />
                     </>
                   ) : (
-                    announcement
+                    displayedText
                   )}
                 </BubbleText>
               </SpeechBubble>

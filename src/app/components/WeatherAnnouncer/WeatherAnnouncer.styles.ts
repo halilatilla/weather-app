@@ -28,6 +28,42 @@ const eyeBlink = keyframes`
   50% { transform: scaleY(0.1); }
 `;
 
+// Talking mouth animation - natural speaking rhythm
+const mouthTalk = keyframes`
+  0%, 100% { 
+    height: 4px;
+    border-radius: 0 0 6px 6px;
+  }
+  10% { 
+    height: 7px;
+    border-radius: 40%;
+  }
+  20% { 
+    height: 4px;
+    border-radius: 0 0 6px 6px;
+  }
+  35% { 
+    height: 9px;
+    border-radius: 50%;
+  }
+  50% { 
+    height: 5px;
+    border-radius: 0 0 5px 5px;
+  }
+  65% { 
+    height: 8px;
+    border-radius: 45%;
+  }
+  80% { 
+    height: 4px;
+    border-radius: 0 0 6px 6px;
+  }
+  90% { 
+    height: 6px;
+    border-radius: 40%;
+  }
+`;
+
 // Paper/notes subtle movement
 const paperHold = keyframes`
   0%, 100% { transform: rotate(-5deg) translateY(0); }
@@ -471,7 +507,7 @@ export const Head = styled.div`
 `;
 
 // Face features
-export const Face = styled.div`
+export const Face = styled.div<{ $isTalking?: boolean }>`
   position: absolute;
   top: 10px;
   left: 50%;
@@ -493,7 +529,7 @@ export const Face = styled.div`
     animation: ${eyeBlink} 4s ease-in-out infinite;
   }
 
-  /* Mouth */
+  /* Mouth - animates when talking */
   &::after {
     content: "";
     position: absolute;
@@ -504,6 +540,7 @@ export const Face = styled.div`
     bottom: 2px;
     left: 50%;
     transform: translateX(-50%);
+    animation: ${({ $isTalking }) => $isTalking ? mouthTalk : 'none'} 0.6s ease-in-out infinite;
   }
 
   @media (max-width: 650px) {
@@ -886,16 +923,17 @@ export const WeatherEmoji = styled.span`
   }
 `;
 
-export const BubbleText = styled.p`
+export const BubbleText = styled.p<{ $isTyping?: boolean }>`
   font-family: 'Press Start 2P', cursive;
   font-size: 10px;
   line-height: 2;
   color: #000000;
   margin: 0;
   
+  /* Blinking cursor - only show while typing */
   &::after {
-    content: "▌";
-    animation: ${cursorBlink} 0.8s step-end infinite;
+    content: "${({ $isTyping }) => $isTyping ? '▌' : ''}";
+    animation: ${({ $isTyping }) => $isTyping ? cursorBlink : 'none'} 0.8s step-end infinite;
     margin-left: 2px;
     color: #000000;
   }
