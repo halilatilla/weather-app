@@ -2,7 +2,8 @@
 
 A retro 90s-themed weather application built with Next.js, TypeScript, and styled-components. This app brings back the nostalgia of Windows 95 era computing while providing real-time weather information.
 
-<img width="893" height="914" alt="CleanShot 2025-12-14 at 14 05 53" src="https://github.com/user-attachments/assets/db9d7032-a551-475b-8bad-ab9819d91ee1" />
+<img width="1950" height="1317" alt="CleanShot 2025-12-14 at 14 35 47" src="https://github.com/user-attachments/assets/03680610-4786-474a-9604-7d044aa214bf" />
+
 
 
 
