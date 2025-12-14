@@ -14,12 +14,12 @@ const livePulse = keyframes`
   }
 `;
 
-// Subtle head movement
+// Subtle head movement - include translateX(-50%) to maintain centering
 const headBob = keyframes`
-  0%, 100% { transform: translateY(0) rotate(0deg); }
-  25% { transform: translateY(-1px) rotate(0.5deg); }
-  50% { transform: translateY(0) rotate(0deg); }
-  75% { transform: translateY(-1px) rotate(-0.5deg); }
+  0%, 100% { transform: translateX(-50%) translateY(0) rotate(0deg); }
+  25% { transform: translateX(-50%) translateY(-1px) rotate(0.5deg); }
+  50% { transform: translateX(-50%) translateY(0) rotate(0deg); }
+  75% { transform: translateX(-50%) translateY(-1px) rotate(-0.5deg); }
 `;
 
 // Eye blink animation
@@ -481,10 +481,10 @@ export const Head = styled.div`
   height: 46px;
   background: #E8C4A0;
   left: 50%;
-  transform: translateX(-50%);
   top: 0;
   border: 3px solid #B8956A;
   animation: ${headBob} 4s ease-in-out infinite;
+  /* Note: translateX(-50%) is included in the headBob animation keyframes */
 
   /* Hair */
   &::before {
