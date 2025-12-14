@@ -1,20 +1,27 @@
 export default function getBackgroundColor(weatherCondition: string) {
   switch (weatherCondition) {
     case "Clear":
-      return "linear-gradient(to bottom right, #87CEEB, #E0F6FF, #87CEFA, #4682B4)"; // Enhanced sky blue gradient with deeper blue tones
+      // Vaporwave sunset gradient
+      return "linear-gradient(180deg, #FF6B6B 0%, #FF00FF 25%, #8B00FF 50%, #4400FF 75%, #000080 100%)";
     case "Rain":
     case "Drizzle":
-      return "linear-gradient(to bottom right, #708090, #A9A9A9, #778899, #C0C0C0)"; // Slate gray with darker and lighter grays
+      // Dark cyberpunk rain
+      return "linear-gradient(180deg, #0a0a0a 0%, #1a1a2e 25%, #16213e 50%, #0f3460 75%, #1a1a2e 100%)";
     case "Clouds":
-      return "linear-gradient(to bottom right, #B0C4DE, #D3D3D3, #E6E6FA, #A9A9A9)"; // Light steel blue with soft gray and lavender
+      // Moody purple retrowave
+      return "linear-gradient(180deg, #2d1b69 0%, #4a1c6e 25%, #6b2c7b 50%, #8b3a8b 75%, #2d1b69 100%)";
     case "Snow":
-      return "linear-gradient(to bottom right, #F0F8FF, #E6E6FA, #DCDCDC, #F5F5F5)"; // Alice blue with soft white and light gray tones
+      // Cool ice blue with pink tints
+      return "linear-gradient(180deg, #e0e7ff 0%, #c7d2fe 25%, #a5b4fc 50%, #818cf8 75%, #6366f1 100%)";
     case "Thunderstorm":
-      return "linear-gradient(to bottom right, #4B0082, #6A5ACD, #8A2BE2, #191970)"; // Indigo with deep purples and midnight blue
+      // Electric storm - dark with neon accents
+      return "linear-gradient(180deg, #0d0221 0%, #1a0a3e 25%, #240b4a 50%, #3d1a5c 75%, #0d0221 100%)";
     case "Mist":
     case "Fog":
-      return "linear-gradient(to bottom right, #D3D3D3, #F0F0F0, #BEBEBE, #C0C0C0)"; // Light gray with soft misty white and gray tones
+      // Mysterious foggy synthwave
+      return "linear-gradient(180deg, #2c3e50 0%, #3498db 25%, #9b59b6 50%, #8e44ad 75%, #2c3e50 100%)";
     default:
-      return "linear-gradient(to bottom right, #F0F8FF, #F5F5F5, #E6E6FA, #DCDCDC)"; // Default light background with subtle gray tones
+      // Classic Windows 95 blue with vaporwave twist
+      return "linear-gradient(180deg, #000080 0%, #0000CD 25%, #4169E1 50%, #6495ED 75%, #000080 100%)";
   }
 }
