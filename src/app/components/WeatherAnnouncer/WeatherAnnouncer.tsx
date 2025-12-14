@@ -122,40 +122,6 @@ const getWeatherEmoji = (condition: string): string => {
   }
 };
 
-// Get clothing/activity advice based on weather
-const getWeatherAdvice = (temp: number): string => {
-  if (temp < 0) {
-    return "Bundle up! It's freezing!";
-  } else if (temp < 10) {
-    return "Don't forget your jacket!";
-  } else if (temp < 18) {
-    return "A light sweater will do!";
-  } else if (temp < 25) {
-    return "Perfect weather outside!";
-  } else if (temp < 32) {
-    return "Stay cool and hydrated!";
-  } else {
-    return "Extreme heat warning!";
-  }
-};
-
-// Generate the full announcement text
-const generateAnnouncement = (
-  weatherData: WeatherData,
-  isCelsius: boolean
-): string => {
-  const temp = isCelsius
-    ? Math.round(weatherData.main.temp)
-    : Math.round((weatherData.main.temp * 9) / 5 + 32);
-  const unit = isCelsius ? "C" : "F";
-  const description = weatherData.weather[0]?.description || "clear sky";
-  const city = weatherData.name;
-
-  return `Today in ${city}, expect ${description}. Temperature around ${temp}°${unit}. ${getWeatherAdvice(
-    weatherData.main.temp
-  )}`;
-};
-
 // Generate ticker headlines
 const generateTickerText = (weatherData: WeatherData | null): string => {
   if (!weatherData) {
@@ -182,6 +148,65 @@ const generateMinimizedText = (
   return `${emoji} ${weatherData.name}: ${temp}°C`;
 };
 
+// Get weather advice based on conditions
+const getWeatherAdvice = (temp: number, condition: string): string => {
+  const conditionLower = condition.toLowerCase();
+
+  if (conditionLower.includes("rain") || conditionLower.includes("drizzle")) {
+    return "Don't forget your umbrella!";
+  }
+  if (conditionLower.includes("snow")) {
+    return "Bundle up warm out there!";
+  }
+  if (conditionLower.includes("thunder")) {
+    return "Stay safe indoors!";
+  }
+
+  if (temp < 0) return "Bundle up! It's freezing!";
+  if (temp < 10) return "Grab a warm jacket!";
+  if (temp < 18) return "A light sweater will do!";
+  if (temp < 25) return "Perfect weather outside!";
+  if (temp < 32) return "Stay cool and hydrated!";
+  return "Extreme heat - stay cool!";
+};
+
+// Generate static fallback report (when AI is unavailable)
+const generateStaticReport = (weatherData: WeatherData): string => {
+  const temp = Math.round(weatherData.main.temp);
+  const feelsLike = Math.round(weatherData.main.feels_like);
+  const description = weatherData.weather[0]?.description || "clear sky";
+  const condition = weatherData.weather[0]?.main || "Clear";
+  const city = weatherData.name;
+  const advice = getWeatherAdvice(temp, condition);
+
+  return `Hey ${city}! Currently ${temp}°C (feels like ${feelsLike}°C) with ${description}. ${advice}`;
+};
+
+// Fetch AI weather report
+const fetchAIWeatherReport = async (
+  weatherData: WeatherData
+): Promise<string> => {
+  const response = await fetch("/api/chat", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      message: "Give me a fun weather report for this city!",
+      weatherData: weatherData,
+      isInitialReport: true,
+    }),
+  });
+
+  const data = await response.json();
+
+  if (data.error) {
+    throw new Error(data.error);
+  }
+
+  return data.response;
+};
+
 export default function WeatherAnnouncer({
   weatherData,
   loading = false,
@@ -189,18 +214,49 @@ export default function WeatherAnnouncer({
 }: WeatherAnnouncerProps) {
   const [isMinimized, setIsMinimized] = useState(false);
   const [chatInput, setChatInput] = useState("");
-  const [aiResponse, setAiResponse] = useState<string | null>(null);
-  const [isAiLoading, setIsAiLoading] = useState(false);
-  const [isAiMode, setIsAiMode] = useState(false);
+  const [aiReport, setAiReport] = useState<string | null>(null);
+  const [aiChatResponse, setAiChatResponse] = useState<string | null>(null);
+  const [isReportLoading, setIsReportLoading] = useState(false);
+  const [isChatLoading, setIsChatLoading] = useState(false);
+  const [isChatMode, setIsChatMode] = useState(false);
 
-  // Default announcement from weather data
-  const defaultAnnouncement = useMemo(() => {
-    if (!weatherData) return null;
-    return generateAnnouncement(weatherData, isCelsius);
-  }, [weatherData, isCelsius]);
+  // Track previous city to detect changes
+  const prevCityRef = useRef<string | null>(null);
 
-  // Current text to display (AI response or default)
-  const currentText = isAiMode ? aiResponse : defaultAnnouncement;
+  // Fetch AI report when weather data changes
+  useEffect(() => {
+    const fetchReport = async () => {
+      if (!weatherData) {
+        setAiReport(null);
+        return;
+      }
+
+      // Check if city changed
+      if (weatherData.name !== prevCityRef.current) {
+        prevCityRef.current = weatherData.name;
+        setIsChatMode(false);
+        setAiChatResponse(null);
+        setIsReportLoading(true);
+        setAiReport(null);
+
+        try {
+          const report = await fetchAIWeatherReport(weatherData);
+          setAiReport(report);
+        } catch (error) {
+          // Fallback to static report if AI fails (API error, credits exhausted, etc.)
+          console.log("AI unavailable, using static report:", error);
+          setAiReport(generateStaticReport(weatherData));
+        } finally {
+          setIsReportLoading(false);
+        }
+      }
+    };
+
+    fetchReport();
+  }, [weatherData]);
+
+  // Current text to display
+  const currentText = isChatMode ? aiChatResponse : aiReport;
 
   // Typewriter effect
   const { displayedText, isTyping } = useTypewriter(currentText, 25);
@@ -215,8 +271,8 @@ export default function WeatherAnnouncer({
   }, [weatherData]);
 
   const minimizedText = useMemo(() => {
-    return generateMinimizedText(weatherData, loading);
-  }, [weatherData, loading]);
+    return generateMinimizedText(weatherData, loading || isReportLoading);
+  }, [weatherData, loading, isReportLoading]);
 
   const toggleMinimize = () => {
     setIsMinimized(!isMinimized);
@@ -225,11 +281,11 @@ export default function WeatherAnnouncer({
   // Handle chat submission
   const handleChatSubmit = async (e: FormEvent) => {
     e.preventDefault();
-    if (!chatInput.trim() || isAiLoading) return;
+    if (!chatInput.trim() || isChatLoading) return;
 
-    setIsAiLoading(true);
-    setIsAiMode(true);
-    setAiResponse(null);
+    setIsChatLoading(true);
+    setIsChatMode(true);
+    setAiChatResponse(null);
 
     try {
       const response = await fetch("/api/chat", {
@@ -246,28 +302,36 @@ export default function WeatherAnnouncer({
       const data = await response.json();
 
       if (data.error) {
-        setAiResponse("Oops! My weather radar is fuzzy. Try again!");
+        // Check if it's a rate limit or quota error
+        if (
+          data.error.includes("quota") ||
+          data.error.includes("rate") ||
+          data.error.includes("Too many")
+        ) {
+          setAiChatResponse("Whoa! AI is taking a break. Check back soon!");
+        } else {
+          setAiChatResponse("Oops! My weather radar is fuzzy. Try again!");
+        }
       } else {
-        setAiResponse(data.response);
+        setAiChatResponse(data.response);
       }
     } catch (error) {
-      setAiResponse("Technical difficulties! Even weather tech has bad days!");
+      // Network error or API unavailable - give helpful static response
+      if (weatherData) {
+        const temp = Math.round(weatherData.main.temp);
+        setAiChatResponse(
+          `AI offline! But it's ${temp}°C in ${weatherData.name} right now!`
+        );
+      } else {
+        setAiChatResponse("AI is offline. Search a city to see the weather!");
+      }
     } finally {
-      setIsAiLoading(false);
+      setIsChatLoading(false);
       setChatInput("");
     }
   };
 
-  // Reset to default mode when weather data changes (new city searched)
-  const prevWeatherDataRef = useRef<WeatherData | null>(null);
-  useEffect(() => {
-    // Check if city has changed
-    if (weatherData?.name !== prevWeatherDataRef.current?.name) {
-      setIsAiMode(false);
-      setAiResponse(null);
-      prevWeatherDataRef.current = weatherData;
-    }
-  }, [weatherData]);
+  const isAnyLoading = loading || isReportLoading || isChatLoading;
 
   // Character talks only while typing (typewriter effect active)
   const isTalking = isTyping;
@@ -329,18 +393,22 @@ export default function WeatherAnnouncer({
           </NewsTicker>
 
           {/* Speech Bubble */}
-          {(weatherData || loading || isAiLoading || aiResponse) && (
+          {(weatherData || isAnyLoading || currentText) && (
             <SpeechBubbleContainer>
               <SpeechBubble>
                 <BubbleHeader>
-                  <WeatherEmoji>{isAiMode ? "🤖" : weatherEmoji}</WeatherEmoji>
-                  {isAiMode ? "CHIP SAYS" : "WEATHER REPORT"}
-                  {isAiMode && <AIBadge>AI</AIBadge>}
+                  <WeatherEmoji>{weatherEmoji}</WeatherEmoji>
+                  {isChatMode ? "CHIP SAYS" : "WEATHER REPORT"}
+                  <AIBadge>AI</AIBadge>
                 </BubbleHeader>
-                <BubbleText $isTyping={isTyping || isAiLoading}>
-                  {loading || isAiLoading ? (
+                <BubbleText $isTyping={isTyping || isAnyLoading}>
+                  {isAnyLoading ? (
                     <>
-                      {isAiLoading ? "THINKING" : "LOADING FORECAST"}
+                      {isChatLoading
+                        ? "THINKING"
+                        : isReportLoading
+                        ? "GENERATING REPORT"
+                        : "LOADING FORECAST"}
                       <LoadingText />
                     </>
                   ) : (
@@ -352,7 +420,7 @@ export default function WeatherAnnouncer({
           )}
 
           {/* Waiting message when no data */}
-          {!weatherData && !loading && !isAiLoading && !aiResponse && (
+          {!weatherData && !isAnyLoading && !currentText && (
             <WaitingMessage>
               HI, I&apos;M CHIP!
               <span>Search a city & ask me anything!</span>
@@ -367,13 +435,13 @@ export default function WeatherAnnouncer({
                 placeholder="Ask Chip about the weather..."
                 value={chatInput}
                 onChange={(e) => setChatInput(e.target.value)}
-                disabled={isAiLoading}
+                disabled={isAnyLoading}
               />
               <ChatSendButton
                 type="submit"
-                disabled={isAiLoading || !chatInput.trim()}
+                disabled={isAnyLoading || !chatInput.trim()}
               >
-                {isAiLoading ? "..." : "ASK"}
+                {isChatLoading ? "..." : "ASK"}
               </ChatSendButton>
             </ChatInputWrapper>
           </ChatContainer>

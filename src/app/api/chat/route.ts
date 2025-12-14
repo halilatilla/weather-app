@@ -42,8 +42,8 @@ function checkInMemoryRateLimit(ip: string): {
   return { success: true, remaining: RATE_LIMIT - record.count };
 }
 
-// System prompt for our retro 90s weather announcer
-const SYSTEM_PROMPT = `You are a fun, enthusiastic 90s-style TV weather announcer named "Chip Forecast". 
+// System prompt for our retro 90s weather announcer - Chat mode
+const CHAT_SYSTEM_PROMPT = `You are a fun, enthusiastic 90s-style TV weather announcer named "Chip Forecast". 
 You speak in a retro, upbeat manner like classic TV weather presenters from the 1990s.
 
 Your personality:
@@ -58,6 +58,23 @@ Your personality:
 You receive the current weather data and user's question. Use the weather data to give accurate, helpful, and fun responses.
 
 IMPORTANT: Keep responses under 150 characters when possible, max 200 characters. This is for a retro pixel-art speech bubble!`;
+
+// System prompt for initial weather report - more detailed and fun
+const REPORT_SYSTEM_PROMPT = `You are Chip Forecast, a charismatic 90s TV weather anchor giving a LIVE weather report!
+
+Your style:
+- Open with an energetic greeting mentioning the city name
+- Describe the current conditions in a fun, engaging way
+- Use 90s expressions naturally ("totally", "radical", "awesome", "wicked")
+- Include practical advice (umbrella? sunglasses? jacket?)
+- Add personality - make a weather pun or fun observation
+- End with an upbeat sign-off
+
+Format: One cohesive paragraph, like a real TV weather segment.
+
+IMPORTANT: Keep the entire report between 180-220 characters. This displays in a retro pixel-art speech bubble, so be concise but engaging!
+
+Example tone: "Good morning Springfield! It's a totally rad 22°C with clear skies - perfect for catching some rays! Grab those shades and enjoy the sunshine, folks!"`;
 
 interface WeatherData {
   name: string;
@@ -115,9 +132,10 @@ export async function POST(request: NextRequest) {
     }
 
     const body = await request.json();
-    const { message, weatherData } = body as {
+    const { message, weatherData, isInitialReport } = body as {
       message: string;
       weatherData: WeatherData | null;
+      isInitialReport?: boolean;
     };
 
     if (!message) {
@@ -152,20 +170,30 @@ Current Weather Data:
         "No weather data available yet. User needs to search for a city first.";
     }
 
+    // Choose system prompt based on request type
+    const systemPrompt = isInitialReport
+      ? REPORT_SYSTEM_PROMPT
+      : CHAT_SYSTEM_PROMPT;
+
+    // Build user message
+    const userMessage = isInitialReport
+      ? `${weatherContext}\n\nGenerate an engaging weather report for this city!`
+      : `${weatherContext}\n\nUser's question: ${message}`;
+
     const completion = await openai.chat.completions.create({
       model: "gpt-4o-mini",
       messages: [
         {
           role: "system",
-          content: SYSTEM_PROMPT,
+          content: systemPrompt,
         },
         {
           role: "user",
-          content: `${weatherContext}\n\nUser's question: ${message}`,
+          content: userMessage,
         },
       ],
-      max_tokens: 150,
-      temperature: 0.8,
+      max_tokens: isInitialReport ? 200 : 150,
+      temperature: 0.9, // Slightly higher for more creative reports
     });
 
     const aiResponse =
