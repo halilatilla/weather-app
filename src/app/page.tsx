@@ -2,8 +2,11 @@
 
 import { useState, Suspense } from "react";
 import useGetWeatherByCityName from "./hooks/useGetWeatherByCityName";
+import useGetForecast from "./hooks/useGetForecast";
 import Weather from "./components/Weather/Weather";
 import WeatherAnnouncer from "./components/WeatherAnnouncer";
+import Forecast from "./components/Forecast";
+import WeatherEffects from "./components/WeatherEffects";
 import Input from "./ui/Input/Input";
 import Button from "./ui/Button/Button";
 import {
@@ -24,11 +27,16 @@ import SearchParamsHandler from "./components/SearchParamsHandler";
 export default function Home() {
   const [city, setCity] = useState("");
   const [fetchCity, setFetchCity] = useState("");
+  const [isCelsius, setIsCelsius] = useState(true);
+
   const {
     data: weatherData,
     error,
     isValidating,
   } = useGetWeatherByCityName(fetchCity);
+
+  const { data: forecastData, isValidating: isForecastLoading } =
+    useGetForecast(fetchCity);
 
   const handleCityChange = (newCity: string) => {
     setCity(newCity);
@@ -51,6 +59,9 @@ export default function Home() {
 
   return (
     <DynamicBackground $weatherCondition={weatherCondition}>
+      {/* Animated Weather Effects */}
+      <WeatherEffects condition={weatherCondition} />
+
       <Container>
         <WindowTitleBar>
           <WindowTitle>⛅ WEATHER.EXE</WindowTitle>
@@ -84,12 +95,21 @@ export default function Home() {
             error={error ? "ERROR: CITY NOT FOUND" : null}
             loading={isValidating}
           />
+
+          {/* 5-Day Forecast */}
+          {(fetchCity || forecastData) && (
+            <Forecast
+              forecastData={forecastData ?? null}
+              loading={isForecastLoading}
+              isCelsius={isCelsius}
+            />
+          )}
         </WindowContent>
       </Container>
       <WeatherAnnouncer
         weatherData={weatherData ?? null}
         loading={isValidating}
-        isCelsius={true}
+        isCelsius={isCelsius}
       />
       <Suspense fallback={null}>
         <SearchParamsHandler onCityChange={setFetchCity} />

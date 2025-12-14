@@ -18,7 +18,8 @@ export const DynamicBackground = styled.div<{ $weatherCondition: string }>`
   display: flex;
   justify-content: center;
   align-items: center;
-  background: ${({ $weatherCondition }) => getBackgroundColor($weatherCondition)};
+  background: ${({ $weatherCondition }) =>
+    getBackgroundColor($weatherCondition)};
   transition: background 0.5s ease-in-out;
   position: relative;
 
@@ -30,8 +31,10 @@ export const DynamicBackground = styled.div<{ $weatherCondition: string }>`
     left: 0;
     right: 0;
     bottom: 0;
-    background-image: 
-      linear-gradient(rgba(255, 0, 255, 0.03) 1px, transparent 1px),
+    background-image: linear-gradient(
+        rgba(255, 0, 255, 0.03) 1px,
+        transparent 1px
+      ),
       linear-gradient(90deg, rgba(255, 0, 255, 0.03) 1px, transparent 1px);
     background-size: 20px 20px;
     pointer-events: none;
@@ -45,15 +48,18 @@ export const DynamicBackground = styled.div<{ $weatherCondition: string }>`
     left: 0;
     right: 0;
     bottom: 0;
-    background-image: 
-      radial-gradient(2px 2px at 20px 30px, #FFFFFF, transparent),
-      radial-gradient(2px 2px at 40px 70px, #FFFF00, transparent),
-      radial-gradient(1px 1px at 90px 40px, #00FFFF, transparent),
-      radial-gradient(2px 2px at 160px 120px, #FF00FF, transparent),
-      radial-gradient(1px 1px at 230px 80px, #FFFFFF, transparent),
-      radial-gradient(2px 2px at 300px 150px, #00FF00, transparent),
-      radial-gradient(1px 1px at 400px 60px, #FFFF00, transparent),
-      radial-gradient(2px 2px at 500px 200px, #00FFFF, transparent);
+    background-image: radial-gradient(
+        2px 2px at 20px 30px,
+        #ffffff,
+        transparent
+      ),
+      radial-gradient(2px 2px at 40px 70px, #ffff00, transparent),
+      radial-gradient(1px 1px at 90px 40px, #00ffff, transparent),
+      radial-gradient(2px 2px at 160px 120px, #ff00ff, transparent),
+      radial-gradient(1px 1px at 230px 80px, #ffffff, transparent),
+      radial-gradient(2px 2px at 300px 150px, #00ff00, transparent),
+      radial-gradient(1px 1px at 400px 60px, #ffff00, transparent),
+      radial-gradient(2px 2px at 500px 200px, #00ffff, transparent);
     background-repeat: repeat;
     background-size: 550px 250px;
     animation: ${starTwinkle} 3s ease-in-out infinite;
@@ -64,12 +70,10 @@ export const DynamicBackground = styled.div<{ $weatherCondition: string }>`
 
 export const Container = styled.div`
   /* Windows 95 style window */
-  background: #C0C0C0;
+  background: #c0c0c0;
   border: 3px solid;
-  border-color: #FFFFFF #808080 #808080 #FFFFFF;
-  box-shadow: 
-    inset 1px 1px 0 #DFDFDF,
-    inset -1px -1px 0 #404040,
+  border-color: #ffffff #808080 #808080 #ffffff;
+  box-shadow: inset 1px 1px 0 #dfdfdf, inset -1px -1px 0 #404040,
     4px 4px 0 rgba(0, 0, 0, 0.3);
   padding: 0;
   width: 90%;
@@ -86,7 +90,7 @@ export const Container = styled.div`
 `;
 
 export const WindowTitleBar = styled.div`
-  background: linear-gradient(90deg, #000080, #1084D0);
+  background: linear-gradient(90deg, #000080, #1084d0);
   padding: 4px 6px;
   display: flex;
   justify-content: space-between;
@@ -96,8 +100,8 @@ export const WindowTitleBar = styled.div`
 `;
 
 export const WindowTitle = styled.span`
-  color: #FFFFFF;
-  font-family: 'Press Start 2P', cursive;
+  color: #ffffff;
+  font-family: "Press Start 2P", cursive;
   font-size: 10px;
   font-weight: bold;
   text-shadow: 1px 1px 0 #000000;
@@ -115,10 +119,10 @@ export const WindowButtons = styled.div`
 export const WindowButton = styled.button`
   width: 16px;
   height: 14px;
-  background: #C0C0C0;
+  background: #c0c0c0;
   border: 2px solid;
-  border-color: #FFFFFF #808080 #808080 #FFFFFF;
-  font-family: 'Press Start 2P', cursive;
+  border-color: #ffffff #808080 #808080 #ffffff;
+  font-family: "Press Start 2P", cursive;
   font-size: 8px;
   line-height: 1;
   cursor: pointer;
@@ -128,13 +132,13 @@ export const WindowButton = styled.button`
   padding: 0;
 
   &:active {
-    border-color: #808080 #FFFFFF #FFFFFF #808080;
+    border-color: #808080 #ffffff #ffffff #808080;
   }
 `;
 
 export const WindowContent = styled.div`
   padding: 1.5rem;
-  background: #C0C0C0;
+  background: #c0c0c0;
 
   @media (max-width: 600px) {
     padding: 1rem;
@@ -146,17 +150,13 @@ export const Title = styled.h1`
   color: #000080;
   margin-bottom: 1.5rem;
   font-size: 1.5rem;
-  font-family: 'Press Start 2P', cursive;
-  text-shadow: 
-    2px 2px 0 #FF00FF,
-    4px 4px 0 #00FFFF;
+  font-family: "Press Start 2P", cursive;
+  text-shadow: 2px 2px 0 #ff00ff, 4px 4px 0 #00ffff;
   letter-spacing: 2px;
 
   @media (max-width: 600px) {
     font-size: 1rem;
-    text-shadow: 
-      1px 1px 0 #FF00FF,
-      2px 2px 0 #00FFFF;
+    text-shadow: 1px 1px 0 #ff00ff, 2px 2px 0 #00ffff;
   }
 `;
 
@@ -176,31 +176,27 @@ export const RetroStripe = styled.div`
   height: 8px;
   background: repeating-linear-gradient(
     90deg,
-    #FF0000 0px,
-    #FF0000 20px,
-    #FF8000 20px,
-    #FF8000 40px,
-    #FFFF00 40px,
-    #FFFF00 60px,
-    #00FF00 60px,
-    #00FF00 80px,
-    #00FFFF 80px,
-    #00FFFF 100px,
-    #0000FF 100px,
-    #0000FF 120px,
-    #FF00FF 120px,
-    #FF00FF 140px
+    #ff0000 0px,
+    #ff0000 20px,
+    #ff8000 20px,
+    #ff8000 40px,
+    #ffff00 40px,
+    #ffff00 60px,
+    #00ff00 60px,
+    #00ff00 80px,
+    #00ffff 80px,
+    #00ffff 100px,
+    #0000ff 100px,
+    #0000ff 120px,
+    #ff00ff 120px,
+    #ff00ff 140px
   );
   margin: 8px 0;
 `;
 
 export const PixelDivider = styled.div`
   height: 2px;
-  background: linear-gradient(90deg, 
-    #808080 0%, 
-    #FFFFFF 50%, 
-    #808080 100%
-  );
+  background: linear-gradient(90deg, #808080 0%, #ffffff 50%, #808080 100%);
   margin: 12px 0;
   position: relative;
 
@@ -210,7 +206,7 @@ export const PixelDivider = styled.div`
     left: 50%;
     top: 50%;
     transform: translate(-50%, -50%);
-    background: #C0C0C0;
+    background: #c0c0c0;
     padding: 0 8px;
     color: #000080;
     font-size: 10px;
