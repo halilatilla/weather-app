@@ -1,8 +1,10 @@
 "use client";
 
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import {
   StudioContainer,
+  ToggleButton,
+  MinimizedContent,
   LiveIndicator,
   LiveDot,
   LiveText,
@@ -79,8 +81,7 @@ const getWeatherEmoji = (condition: string): string => {
 };
 
 // Get clothing/activity advice based on weather
-const getWeatherAdvice = (temp: number, condition: string): string => {
-  // Temperature-based advice
+const getWeatherAdvice = (temp: number): string => {
   if (temp < 0) {
     return "Bundle up! It's freezing!";
   } else if (temp < 10) {
@@ -108,7 +109,7 @@ const generateAnnouncement = (
   const description = weatherData.weather[0]?.description || "clear sky";
   const city = weatherData.name;
 
-  return `Today in ${city}, expect ${description}. Temperature around ${temp}°${unit}. ${getWeatherAdvice(weatherData.main.temp, weatherData.weather[0]?.main || "")}`;
+  return `Today in ${city}, expect ${description}. Temperature around ${temp}°${unit}. ${getWeatherAdvice(weatherData.main.temp)}`;
 };
 
 // Generate ticker headlines
@@ -126,11 +127,22 @@ const generateTickerText = (weatherData: WeatherData | null): string => {
   return `★★★ LIVE FROM ${city} ★★★ CURRENT CONDITIONS: ${description} ★★★ TEMPERATURE: ${temp}°C ★★★ HUMIDITY: ${humidity}% ★★★ WIND SPEED: ${wind} M/S ★★★ WEATHER ADVISORY IN EFFECT ★★★`;
 };
 
+// Generate short text for minimized view
+const generateMinimizedText = (weatherData: WeatherData | null, loading: boolean): string => {
+  if (loading) return "📡 LOADING...";
+  if (!weatherData) return "📺 WEATHER TV";
+  const temp = Math.round(weatherData.main.temp);
+  const emoji = getWeatherEmoji(weatherData.weather[0]?.main || "");
+  return `${emoji} ${weatherData.name}: ${temp}°C`;
+};
+
 export default function WeatherAnnouncer({
   weatherData,
   loading = false,
   isCelsius = true,
 }: WeatherAnnouncerProps) {
+  const [isMinimized, setIsMinimized] = useState(false);
+
   const announcement = useMemo(() => {
     if (!weatherData) return null;
     return generateAnnouncement(weatherData, isCelsius);
@@ -145,76 +157,99 @@ export default function WeatherAnnouncer({
     return generateTickerText(weatherData);
   }, [weatherData]);
 
+  const minimizedText = useMemo(() => {
+    return generateMinimizedText(weatherData, loading);
+  }, [weatherData, loading]);
+
+  const toggleMinimize = () => {
+    setIsMinimized(!isMinimized);
+  };
+
   return (
-    <StudioContainer>
-      {/* Live Indicator */}
-      <LiveIndicator>
-        <LiveDot />
-        <LiveText>LIVE</LiveText>
-      </LiveIndicator>
+    <StudioContainer $isMinimized={isMinimized}>
+      {/* Toggle Button */}
+      <ToggleButton onClick={toggleMinimize} title={isMinimized ? "Expand" : "Minimize"}>
+        {isMinimized ? "+" : "−"}
+      </ToggleButton>
 
-      {/* Studio Background with Lights */}
-      <StudioBackground>
-        <StudioLight $position="left" />
-        <StudioLight $position="right" />
-      </StudioBackground>
+      {isMinimized ? (
+        /* Minimized View */
+        <MinimizedContent>
+          {minimizedText}
+        </MinimizedContent>
+      ) : (
+        /* Full View */
+        <>
+          {/* Live Indicator */}
+          <LiveIndicator>
+            <LiveDot />
+            <LiveText>LIVE</LiveText>
+          </LiveIndicator>
 
-      {/* Pixel Art News Anchor Character */}
-      <CharacterContainer>
-        <PixelCharacter>
-          <Head>
-            <Face />
-          </Head>
-          <Body />
-          <Tie />
-          <Arms />
-          <Hands />
-          <Paper />
-        </PixelCharacter>
-      </CharacterContainer>
+          {/* Studio Background with Lights */}
+          <StudioBackground>
+            <StudioLight $position="left" />
+            <StudioLight $position="right" />
+          </StudioBackground>
 
-      {/* Microphone */}
-      <Microphone />
+          {/* Pixel Art News Anchor Character */}
+          <CharacterContainer>
+            <PixelCharacter>
+              <Head>
+                <Face />
+              </Head>
+              <Body />
+              <Tie />
+              <Arms />
+              <Hands />
+              <Paper />
+            </PixelCharacter>
+          </CharacterContainer>
 
-      {/* News Desk */}
-      <NewsDesk />
+          {/* Microphone */}
+          <Microphone />
 
-      {/* News Ticker */}
-      <NewsTicker>
-        <TickerLabel>WEATHER</TickerLabel>
-        <TickerContent>
-          <TickerText>{tickerText}</TickerText>
-        </TickerContent>
-      </NewsTicker>
+          {/* News Desk */}
+          <NewsDesk />
 
-      {/* Speech Bubble - Only show when there's data or loading */}
-      {(weatherData || loading) && (
-        <SpeechBubbleContainer>
-          <SpeechBubble>
-            <BubbleHeader>
-              <WeatherEmoji>{weatherEmoji}</WeatherEmoji>
-              WEATHER REPORT
-            </BubbleHeader>
-            <BubbleText>
-              {loading ? (
-                <>
-                  LOADING FORECAST
-                  <LoadingText />
-                </>
-              ) : (
-                announcement
-              )}
-            </BubbleText>
-          </SpeechBubble>
-        </SpeechBubbleContainer>
-      )}
+          {/* News Ticker */}
+          <NewsTicker>
+            <TickerLabel>WEATHER</TickerLabel>
+            <TickerContent>
+              <TickerText>{tickerText}</TickerText>
+            </TickerContent>
+          </NewsTicker>
 
-      {/* Waiting message when no data */}
-      {!weatherData && !loading && (
-        <WaitingMessage>
-          AWAITING CITY INPUT
-          <span>Enter a city name above</span>
-        </WaitingMessage>
+          {/* Speech Bubble - Only show when there's data or loading */}
+          {(weatherData || loading) && (
+            <SpeechBubbleContainer>
+              <SpeechBubble>
+                <BubbleHeader>
+                  <WeatherEmoji>{weatherEmoji}</WeatherEmoji>
+                  WEATHER REPORT
+                </BubbleHeader>
+                <BubbleText>
+                  {loading ? (
+                    <>
+                      LOADING FORECAST
+                      <LoadingText />
+                    </>
+                  ) : (
+                    announcement
+                  )}
+                </BubbleText>
+              </SpeechBubble>
+            </SpeechBubbleContainer>
+          )}
+
+          {/* Waiting message when no data */}
+          {!weatherData && !loading && (
+            <WaitingMessage>
+              AWAITING CITY INPUT
+              <span>Enter a city name above</span>
+            </WaitingMessage>
+          )}
+        </>
       )}
     </StudioContainer>
   );

@@ -81,12 +81,12 @@ const studioLightGlow = keyframes`
 
 // ============ MAIN CONTAINER ============
 
-export const StudioContainer = styled.div`
+export const StudioContainer = styled.div<{ $isMinimized?: boolean }>`
   position: fixed;
   bottom: 20px;
   left: 20px;
-  width: 500px;
-  height: 340px;
+  width: ${({ $isMinimized }) => $isMinimized ? '200px' : '500px'};
+  height: ${({ $isMinimized }) => $isMinimized ? '50px' : '340px'};
   background: linear-gradient(180deg, #1a1a3e 0%, #0d0d2b 50%, #0a0a20 100%);
   border: 4px solid #333366;
   border-radius: 8px;
@@ -97,6 +97,7 @@ export const StudioContainer = styled.div`
     inset 0 0 30px rgba(0, 100, 200, 0.1),
     8px 8px 0px 0px rgba(0, 0, 0, 0.3);
   animation: ${crtFlicker} 4s ease-in-out infinite;
+  transition: all 0.3s ease-in-out;
 
   /* CRT scanlines overlay */
   &::before {
@@ -135,19 +136,82 @@ export const StudioContainer = styled.div`
     z-index: 11;
   }
 
+  @media (max-width: 1200px) {
+    width: ${({ $isMinimized }) => $isMinimized ? '180px' : '420px'};
+    height: ${({ $isMinimized }) => $isMinimized ? '45px' : '300px'};
+  }
+
   @media (max-width: 900px) {
-    width: 420px;
-    height: 320px;
+    width: ${({ $isMinimized }) => $isMinimized ? '160px' : '350px'};
+    height: ${({ $isMinimized }) => $isMinimized ? '40px' : '280px'};
+    bottom: 10px;
+    left: 10px;
   }
 
   @media (max-width: 650px) {
-    position: relative;
-    bottom: auto;
-    left: auto;
-    width: 95%;
-    max-width: 500px;
-    height: 360px;
-    margin: 20px auto;
+    /* On mobile, hide when minimized, show compact version when expanded */
+    width: ${({ $isMinimized }) => $isMinimized ? '140px' : 'calc(100% - 20px)'};
+    height: ${({ $isMinimized }) => $isMinimized ? '40px' : '320px'};
+    left: 10px;
+    right: 10px;
+    bottom: 10px;
+  }
+`;
+
+// Toggle button to minimize/expand
+export const ToggleButton = styled.button`
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  width: 28px;
+  height: 28px;
+  background: #CC0000;
+  border: 3px solid;
+  border-color: #FF6666 #660000 #660000 #FF6666;
+  border-radius: 4px;
+  color: #FFFFFF;
+  font-family: 'Press Start 2P', cursive;
+  font-size: 10px;
+  cursor: pointer;
+  z-index: 20;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.1s;
+
+  &:hover {
+    background: #FF0000;
+  }
+
+  &:active {
+    border-color: #660000 #FF6666 #FF6666 #660000;
+  }
+
+  @media (max-width: 900px) {
+    width: 24px;
+    height: 24px;
+    font-size: 8px;
+  }
+`;
+
+// Minimized view content
+export const MinimizedContent = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  height: 100%;
+  padding: 0 45px 0 15px;
+  font-family: 'Press Start 2P', cursive;
+  font-size: 10px;
+  color: #00FF00;
+  text-shadow: 0 0 5px #00FF00;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+
+  @media (max-width: 900px) {
+    font-size: 8px;
+    padding: 0 40px 0 10px;
   }
 `;
 
