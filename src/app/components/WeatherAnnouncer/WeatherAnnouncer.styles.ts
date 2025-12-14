@@ -996,3 +996,100 @@ export const WaitingMessage = styled.div`
     color: #888;
   }
 `;
+
+// ============ CHAT INPUT ============
+
+export const ChatContainer = styled.div`
+  position: absolute;
+  bottom: 75px;
+  left: 10px;
+  right: 10px;
+  z-index: 6;
+
+  @media (max-width: 900px) {
+    bottom: 85px;
+  }
+
+  @media (max-width: 650px) {
+    bottom: 90px;
+  }
+`;
+
+export const ChatInputWrapper = styled.form`
+  display: flex;
+  gap: 4px;
+  background: #c0c0c0;
+  padding: 6px;
+  border: 3px solid;
+  border-color: #808080 #ffffff #ffffff #808080;
+`;
+
+export const ChatInput = styled.input`
+  flex: 1;
+  padding: 8px 10px;
+  font-family: "Press Start 2P", cursive;
+  font-size: 8px;
+  background: #ffffff;
+  border: 2px solid;
+  border-color: #808080 #ffffff #ffffff #808080;
+  color: #000000;
+  outline: none;
+
+  &::placeholder {
+    color: #808080;
+  }
+
+  &:focus {
+    background: #ffffcc;
+  }
+
+  @media (max-width: 650px) {
+    font-size: 7px;
+    padding: 6px 8px;
+  }
+`;
+
+export const ChatSendButton = styled.button`
+  padding: 8px 12px;
+  font-family: "Press Start 2P", cursive;
+  font-size: 8px;
+  background: #c0c0c0;
+  border: 2px solid;
+  border-color: #ffffff #808080 #808080 #ffffff;
+  color: #000000;
+  cursor: pointer;
+  white-space: nowrap;
+
+  &:hover {
+    background: #d0d0d0;
+  }
+
+  &:active {
+    border-color: #808080 #ffffff #ffffff #808080;
+  }
+
+  &:disabled {
+    color: #808080;
+    cursor: not-allowed;
+  }
+
+  @media (max-width: 650px) {
+    font-size: 7px;
+    padding: 6px 8px;
+  }
+`;
+
+export const AIBadge = styled.span`
+  display: inline-block;
+  background: linear-gradient(90deg, #ff00ff, #00ffff);
+  color: #000000;
+  font-family: "Press Start 2P", cursive;
+  font-size: 6px;
+  padding: 2px 6px;
+  margin-left: 6px;
+  border-radius: 2px;
+  animation: ${keyframes`
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.7; }
+  `} 1.5s ease-in-out infinite;
+`;

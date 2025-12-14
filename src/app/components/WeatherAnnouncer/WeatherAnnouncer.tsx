@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState, useEffect, useRef } from "react";
+import { useMemo, useState, useEffect, useRef, FormEvent } from "react";
 import {
   StudioContainer,
   ToggleButton,
@@ -32,6 +32,11 @@ import {
   WeatherEmoji,
   LoadingText,
   WaitingMessage,
+  ChatContainer,
+  ChatInputWrapper,
+  ChatInput,
+  ChatSendButton,
+  AIBadge,
 } from "./WeatherAnnouncer.styles";
 
 interface WeatherData {
@@ -68,7 +73,7 @@ const useTypewriter = (text: string | null, speed: number = 30) => {
     if (text !== previousTextRef.current) {
       previousTextRef.current = text;
       setDisplayedText("");
-      
+
       if (!text) {
         setIsTyping(false);
         return;
@@ -146,28 +151,32 @@ const generateAnnouncement = (
   const description = weatherData.weather[0]?.description || "clear sky";
   const city = weatherData.name;
 
-  return `Today in ${city}, expect ${description}. Temperature around ${temp}°${unit}. ${getWeatherAdvice(weatherData.main.temp)}`;
+  return `Today in ${city}, expect ${description}. Temperature around ${temp}°${unit}. ${getWeatherAdvice(
+    weatherData.main.temp
+  )}`;
 };
 
 // Generate ticker headlines
 const generateTickerText = (weatherData: WeatherData | null): string => {
   if (!weatherData) {
-    return "★★★ WEATHER CHANNEL LIVE ★★★ ENTER A CITY TO GET THE LATEST FORECAST ★★★ POWERED BY RETRO WEATHER SYSTEMS ★★★";
+    return "★★★ WEATHER CHANNEL LIVE ★★★ ASK CHIP ANYTHING ABOUT THE WEATHER! ★★★ POWERED BY AI ★★★";
   }
 
   const city = weatherData.name.toUpperCase();
   const temp = Math.round(weatherData.main.temp);
-  const description = weatherData.weather[0]?.description.toUpperCase() || "CLEAR";
-  const humidity = weatherData.main.humidity;
-  const wind = weatherData.wind.speed;
+  const description =
+    weatherData.weather[0]?.description.toUpperCase() || "CLEAR";
 
-  return `★★★ LIVE FROM ${city} ★★★ CURRENT CONDITIONS: ${description} ★★★ TEMPERATURE: ${temp}°C ★★★ HUMIDITY: ${humidity}% ★★★ WIND SPEED: ${wind} M/S ★★★ WEATHER ADVISORY IN EFFECT ★★★`;
+  return `★★★ LIVE FROM ${city} ★★★ ${description} AT ${temp}°C ★★★ ASK CHIP YOUR WEATHER QUESTIONS! ★★★ AI-POWERED FORECAST ★★★`;
 };
 
 // Generate short text for minimized view
-const generateMinimizedText = (weatherData: WeatherData | null, loading: boolean): string => {
+const generateMinimizedText = (
+  weatherData: WeatherData | null,
+  loading: boolean
+): string => {
   if (loading) return "📡 LOADING...";
-  if (!weatherData) return "📺 WEATHER TV";
+  if (!weatherData) return "🤖 ASK CHIP!";
   const temp = Math.round(weatherData.main.temp);
   const emoji = getWeatherEmoji(weatherData.weather[0]?.main || "");
   return `${emoji} ${weatherData.name}: ${temp}°C`;
@@ -179,17 +188,25 @@ export default function WeatherAnnouncer({
   isCelsius = true,
 }: WeatherAnnouncerProps) {
   const [isMinimized, setIsMinimized] = useState(false);
+  const [chatInput, setChatInput] = useState("");
+  const [aiResponse, setAiResponse] = useState<string | null>(null);
+  const [isAiLoading, setIsAiLoading] = useState(false);
+  const [isAiMode, setIsAiMode] = useState(false);
 
-  const announcement = useMemo(() => {
+  // Default announcement from weather data
+  const defaultAnnouncement = useMemo(() => {
     if (!weatherData) return null;
     return generateAnnouncement(weatherData, isCelsius);
   }, [weatherData, isCelsius]);
 
-  // Typewriter effect for the announcement
-  const { displayedText, isTyping } = useTypewriter(announcement, 35);
+  // Current text to display (AI response or default)
+  const currentText = isAiMode ? aiResponse : defaultAnnouncement;
+
+  // Typewriter effect
+  const { displayedText, isTyping } = useTypewriter(currentText, 25);
 
   const weatherEmoji = useMemo(() => {
-    if (!weatherData) return "🌤️";
+    if (!weatherData) return "🤖";
     return getWeatherEmoji(weatherData.weather[0]?.main || "");
   }, [weatherData]);
 
@@ -205,21 +222,69 @@ export default function WeatherAnnouncer({
     setIsMinimized(!isMinimized);
   };
 
-  // Character talks while typing or loading
-  const isTalking = isTyping || loading;
+  // Handle chat submission
+  const handleChatSubmit = async (e: FormEvent) => {
+    e.preventDefault();
+    if (!chatInput.trim() || isAiLoading) return;
+
+    setIsAiLoading(true);
+    setIsAiMode(true);
+    setAiResponse(null);
+
+    try {
+      const response = await fetch("/api/chat", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          message: chatInput,
+          weatherData: weatherData,
+        }),
+      });
+
+      const data = await response.json();
+
+      if (data.error) {
+        setAiResponse("Oops! My weather radar is fuzzy. Try again!");
+      } else {
+        setAiResponse(data.response);
+      }
+    } catch (error) {
+      setAiResponse("Technical difficulties! Even weather tech has bad days!");
+    } finally {
+      setIsAiLoading(false);
+      setChatInput("");
+    }
+  };
+
+  // Reset to default mode when weather data changes (new city searched)
+  const prevWeatherDataRef = useRef<WeatherData | null>(null);
+  useEffect(() => {
+    // Check if city has changed
+    if (weatherData?.name !== prevWeatherDataRef.current?.name) {
+      setIsAiMode(false);
+      setAiResponse(null);
+      prevWeatherDataRef.current = weatherData;
+    }
+  }, [weatherData]);
+
+  // Character talks only while typing (typewriter effect active)
+  const isTalking = isTyping;
 
   return (
     <StudioContainer $isMinimized={isMinimized}>
       {/* Toggle Button */}
-      <ToggleButton onClick={toggleMinimize} title={isMinimized ? "Expand" : "Minimize"}>
+      <ToggleButton
+        onClick={toggleMinimize}
+        title={isMinimized ? "Expand" : "Minimize"}
+      >
         {isMinimized ? "+" : "−"}
       </ToggleButton>
 
       {isMinimized ? (
         /* Minimized View */
-        <MinimizedContent>
-          {minimizedText}
-        </MinimizedContent>
+        <MinimizedContent>{minimizedText}</MinimizedContent>
       ) : (
         /* Full View */
         <>
@@ -263,18 +328,19 @@ export default function WeatherAnnouncer({
             </TickerContent>
           </NewsTicker>
 
-          {/* Speech Bubble - Only show when there's data or loading */}
-          {(weatherData || loading) && (
+          {/* Speech Bubble */}
+          {(weatherData || loading || isAiLoading || aiResponse) && (
             <SpeechBubbleContainer>
               <SpeechBubble>
                 <BubbleHeader>
-                  <WeatherEmoji>{weatherEmoji}</WeatherEmoji>
-                  WEATHER REPORT
+                  <WeatherEmoji>{isAiMode ? "🤖" : weatherEmoji}</WeatherEmoji>
+                  {isAiMode ? "CHIP SAYS" : "WEATHER REPORT"}
+                  {isAiMode && <AIBadge>AI</AIBadge>}
                 </BubbleHeader>
-                <BubbleText $isTyping={isTyping}>
-                  {loading ? (
+                <BubbleText $isTyping={isTyping || isAiLoading}>
+                  {loading || isAiLoading ? (
                     <>
-                      LOADING FORECAST
+                      {isAiLoading ? "THINKING" : "LOADING FORECAST"}
                       <LoadingText />
                     </>
                   ) : (
@@ -286,12 +352,31 @@ export default function WeatherAnnouncer({
           )}
 
           {/* Waiting message when no data */}
-          {!weatherData && !loading && (
+          {!weatherData && !loading && !isAiLoading && !aiResponse && (
             <WaitingMessage>
-              AWAITING CITY INPUT
-              <span>Enter a city name above</span>
+              HI, I&apos;M CHIP!
+              <span>Search a city & ask me anything!</span>
             </WaitingMessage>
           )}
+
+          {/* Chat Input */}
+          <ChatContainer>
+            <ChatInputWrapper onSubmit={handleChatSubmit}>
+              <ChatInput
+                type="text"
+                placeholder="Ask Chip about the weather..."
+                value={chatInput}
+                onChange={(e) => setChatInput(e.target.value)}
+                disabled={isAiLoading}
+              />
+              <ChatSendButton
+                type="submit"
+                disabled={isAiLoading || !chatInput.trim()}
+              >
+                {isAiLoading ? "..." : "ASK"}
+              </ChatSendButton>
+            </ChatInputWrapper>
+          </ChatContainer>
         </>
       )}
     </StudioContainer>

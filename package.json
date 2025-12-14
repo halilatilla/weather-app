@@ -9,13 +9,23 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@ai-sdk/openai": "^2.0.86",
+    "@ai-sdk/xai": "^2.0.40",
+    "@google/generative-ai": "^0.24.1",
+    "@opentelemetry/api": "^1.9.0",
+    "@upstash/ratelimit": "^2.0.7",
+    "@upstash/redis": "^1.35.8",
+    "ai": "^5.0.113",
+    "groq-sdk": "^0.37.0",
     "lucide-react": "^0.436.0",
     "next": "14.2.7",
+    "openai": "^6.10.0",
     "react": "^18",
     "react-dom": "^18",
     "react-loading-skeleton": "^3.4.0",
     "styled-components": "^6.1.13",
-    "swr": "^2.2.5"
+    "swr": "^2.2.5",
+    "zod": "^4.1.13"
   },
   "devDependencies": {
     "@types/node": "^20",
