@@ -923,6 +923,7 @@ export const BubbleText = styled.p<{ $isTyping?: boolean }>`
   margin: 0;
   flex: 1;
   overflow-y: auto;
+  overscroll-behavior: contain;
   padding-right: 5px;
 
   /* Blinking cursor - only show while typing */
