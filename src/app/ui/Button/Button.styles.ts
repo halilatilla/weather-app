@@ -7,22 +7,28 @@ const pressAnimation = keyframes`
 `;
 
 export const StyledButton = styled.button<{ disabled?: boolean }>`
-  background: ${({ disabled }) => (disabled ? "#808080" : "#C0C0C0")};
-  color: ${({ disabled }) => (disabled ? "#404040" : "#000000")};
-  font-family: 'Press Start 2P', cursive;
+  background: ${({ disabled }) =>
+    disabled
+      ? "var(--window-border-dark, #808080)"
+      : "var(--button-background, #C0C0C0)"};
+  color: ${({ disabled }) =>
+    disabled
+      ? "var(--window-border-darker, #404040)"
+      : "var(--button-text, #000000)"};
+  font-family: var(--font-primary, "Press Start 2P", cursive);
   font-size: 10px;
   padding: 12px 20px;
   cursor: ${({ disabled }) => (disabled ? "not-allowed" : "pointer")};
   border: 3px solid;
-  border-color: ${({ disabled }) => 
-    disabled 
-      ? "#808080 #404040 #404040 #808080" 
-      : "#FFFFFF #808080 #808080 #FFFFFF"};
-  box-shadow: ${({ disabled }) => 
-    disabled 
-      ? "none" 
-      : "inset 1px 1px 0 #DFDFDF, inset -1px -1px 0 #404040"};
-  transition: all 0.1s;
+  border-color: ${({ disabled }) =>
+    disabled
+      ? "var(--window-border-dark, #808080) var(--window-border-darker, #404040) var(--window-border-darker, #404040) var(--window-border-dark, #808080)"
+      : "var(--button-border-light, #FFFFFF) var(--button-border-dark, #808080) var(--button-border-dark, #808080) var(--button-border-light, #FFFFFF)"};
+  box-shadow: ${({ disabled }) =>
+    disabled
+      ? "none"
+      : "inset 1px 1px 0 var(--button-hover, #DFDFDF), inset -1px -1px 0 var(--window-border-darker, #404040)"};
+  transition: all 0.2s;
   text-transform: uppercase;
   letter-spacing: 1px;
   min-width: 120px;
@@ -40,23 +46,25 @@ export const StyledButton = styled.button<{ disabled?: boolean }>`
     background: linear-gradient(
       90deg,
       transparent,
-      rgba(255, 255, 255, 0.4),
+      var(--glow-color, rgba(255, 255, 255, 0.4)),
       transparent
     );
     transition: left 0.5s;
   }
 
   &:hover:not(:disabled) {
-    background: #DFDFDF;
-    
+    background: var(--button-hover, #dfdfdf);
+
     &::before {
       left: 100%;
     }
   }
 
   &:active:not(:disabled) {
-    border-color: #808080 #FFFFFF #FFFFFF #808080;
-    box-shadow: inset 2px 2px 4px #404040;
+    border-color: var(--button-border-dark, #808080)
+      var(--button-border-light, #ffffff) var(--button-border-light, #ffffff)
+      var(--button-border-dark, #808080);
+    box-shadow: inset 2px 2px 4px var(--window-border-darker, #404040);
     animation: ${pressAnimation} 0.2s ease-out;
   }
 
