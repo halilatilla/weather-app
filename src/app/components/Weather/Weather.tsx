@@ -5,9 +5,17 @@ import { useState } from "react";
 import {
   WeatherCard,
   CityName,
+  HeroSection,
+  HeroTemp,
+  HeroInfo,
+  WeatherIconWrapper,
+  WeatherDescription,
+  FeelsLike,
   WeatherGrid,
   WeatherItem,
-  IconWrapper,
+  ItemIcon,
+  ItemValue,
+  ItemLabel,
   ErrorMessage,
   TemperatureToggle,
   MarqueeContainer,
@@ -15,7 +23,7 @@ import {
   StatusBar,
   StatusItem,
 } from "./Weather.styles";
-import { Cloud, Wind, Droplets, Thermometer, Sunrise, Cpu, HardDrive } from "lucide-react";
+import { Wind, Droplets, Sunrise, Cpu, HardDrive, Eye } from "lucide-react";
 
 import convertTemperature from "@/lib/convertTemperature";
 import formatSunriseTime from "@/lib/formatSunriseTime";
@@ -39,91 +47,99 @@ export default function Weather({ weatherData, error, loading }: WeatherProps) {
   }
 
   const toggleTemperature = () => setIsCelsius(!isCelsius);
+  const temp = convertTemperature(weatherData.main.temp, isCelsius);
+  const feelsLike = convertTemperature(weatherData.main.feels_like, isCelsius);
+  const unit = getTemperatureUnit(isCelsius);
 
   return (
     <WeatherCard>
       <CityName>{weatherData.name}</CityName>
-      
+
       <MarqueeContainer>
         <MarqueeText>
-          ★★★ WEATHER DATA LOADED SUCCESSFULLY ★★★ CURRENT CONDITIONS FOR {weatherData.name.toUpperCase()} ★★★ {weatherData.weather[0].description.toUpperCase()} ★★★
+          ★★★ LIVE WEATHER DATA ★★★{" "}
+          {weatherData.weather[0].description.toUpperCase()} ★★★ HUMIDITY:{" "}
+          {weatherData.main.humidity}% ★★★ WIND: {weatherData.wind.speed} M/S
+          ★★★
         </MarqueeText>
       </MarqueeContainer>
 
-      <div style={{ 
-        display: 'flex', 
-        justifyContent: 'center', 
-        margin: '16px 0',
-        filter: 'brightness(1.3) saturate(1.5)',
-        imageRendering: 'auto'
-      }}>
-        <Image
-          src={`http://openweathermap.org/img/wn/${weatherData.weather[0].icon}@2x.png`}
-          alt={weatherData.weather[0].description}
-          width={100}
-          height={100}
-          style={{
-            display: "block",
-            filter: "drop-shadow(0 0 10px #00FFFF)",
-          }}
-        />
-      </div>
+      {/* Hero Section with Big Temperature */}
+      <HeroSection>
+        <HeroInfo>
+          <WeatherIconWrapper>
+            <Image
+              src={`https://openweathermap.org/img/wn/${weatherData.weather[0].icon}@2x.png`}
+              alt={weatherData.weather[0].description}
+              width={80}
+              height={80}
+              style={{ display: "block" }}
+            />
+          </WeatherIconWrapper>
+          <WeatherDescription>
+            {weatherData.weather[0].description}
+          </WeatherDescription>
+        </HeroInfo>
 
+        <HeroTemp>
+          {temp}
+          <span>°{unit}</span>
+        </HeroTemp>
+
+        <HeroInfo>
+          <FeelsLike>
+            Feels like {feelsLike}°{unit}
+          </FeelsLike>
+        </HeroInfo>
+      </HeroSection>
+
+      {/* Compact Stats Grid */}
       <WeatherGrid>
         <WeatherItem>
-          <IconWrapper>
-            <Thermometer size={20} />
-          </IconWrapper>
-          {convertTemperature(weatherData.main.temp, isCelsius)}°
-          {getTemperatureUnit(isCelsius)}
+          <ItemIcon>
+            <Droplets size={18} />
+          </ItemIcon>
+          <ItemValue>{weatherData.main.humidity}%</ItemValue>
+          <ItemLabel>Humidity</ItemLabel>
         </WeatherItem>
+
         <WeatherItem>
-          <IconWrapper>
-            <Cloud size={20} />
-          </IconWrapper>
-          {weatherData.weather[0].description}
+          <ItemIcon>
+            <Wind size={18} />
+          </ItemIcon>
+          <ItemValue>{weatherData.wind.speed}</ItemValue>
+          <ItemLabel>Wind m/s</ItemLabel>
         </WeatherItem>
+
         <WeatherItem>
-          <IconWrapper>
-            <Droplets size={20} />
-          </IconWrapper>
-          {weatherData.main.humidity}% HUMID
+          <ItemIcon>
+            <Sunrise size={18} />
+          </ItemIcon>
+          <ItemValue>{formatSunriseTime(weatherData.sys.sunrise)}</ItemValue>
+          <ItemLabel>Sunrise</ItemLabel>
         </WeatherItem>
+
         <WeatherItem>
-          <IconWrapper>
-            <Wind size={20} />
-          </IconWrapper>
-          {weatherData.wind.speed} M/S WIND
-        </WeatherItem>
-        <WeatherItem>
-          <IconWrapper>
-            <Thermometer size={20} />
-          </IconWrapper>
-          FEELS: {convertTemperature(weatherData.main.feels_like, isCelsius)}°
-          {getTemperatureUnit(isCelsius)}
-        </WeatherItem>
-        <WeatherItem>
-          <IconWrapper>
-            <Sunrise size={20} />
-          </IconWrapper>
-          RISE: {formatSunriseTime(weatherData.sys.sunrise)}
+          <ItemIcon>
+            <Eye size={18} />
+          </ItemIcon>
+          <ItemValue>{Math.round(weatherData.visibility / 1000)}</ItemValue>
+          <ItemLabel>Vis. km</ItemLabel>
         </WeatherItem>
       </WeatherGrid>
 
       <TemperatureToggle onClick={toggleTemperature}>
-        [ SWITCH TO {getTemperatureUnit(!isCelsius)} ]
+        [ SWITCH TO °{getTemperatureUnit(!isCelsius)} ]
       </TemperatureToggle>
 
       <StatusBar>
         <StatusItem>
-          <Cpu size={12} /> READY
+          <Cpu size={10} /> READY
         </StatusItem>
         <StatusItem>
-          <HardDrive size={12} /> DATA OK
+          <HardDrive size={10} /> OK
         </StatusItem>
-        <StatusItem>
-          {new Date().toLocaleTimeString()}
-        </StatusItem>
+        <StatusItem>{new Date().toLocaleTimeString()}</StatusItem>
       </StatusBar>
     </WeatherCard>
   );

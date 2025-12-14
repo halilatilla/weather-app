@@ -16,8 +16,8 @@ export const StyledButton = styled.button<{ disabled?: boolean }>`
       ? "var(--window-border-darker, #404040)"
       : "var(--button-text, #000000)"};
   font-family: var(--font-primary, "Press Start 2P", cursive);
-  font-size: 10px;
-  padding: 12px 20px;
+  font-size: 9px;
+  padding: 10px 16px;
   cursor: ${({ disabled }) => (disabled ? "not-allowed" : "pointer")};
   border: 3px solid;
   border-color: ${({ disabled }) =>
@@ -30,10 +30,11 @@ export const StyledButton = styled.button<{ disabled?: boolean }>`
       : "inset 1px 1px 0 var(--button-hover, #DFDFDF), inset -1px -1px 0 var(--window-border-darker, #404040)"};
   transition: all 0.2s;
   text-transform: uppercase;
-  letter-spacing: 1px;
-  min-width: 120px;
+  letter-spacing: 0.5px;
+  min-width: 100px;
   position: relative;
   overflow: hidden;
+  white-space: nowrap;
 
   /* Retro hover glow */
   &::before {

@@ -1,51 +1,50 @@
 import styled, { keyframes } from "styled-components";
 
-const cursorBlink = keyframes`
-  0%, 50% { border-right-color: var(--primary, #00FF00); }
-  51%, 100% { border-right-color: transparent; }
+const focusGlow = keyframes`
+  0%, 100% { box-shadow: inset 2px 2px 4px rgba(0, 0, 0, 0.3), 0 0 0 2px var(--accent, #00FFFF); }
+  50% { box-shadow: inset 2px 2px 4px rgba(0, 0, 0, 0.3), 0 0 8px 2px var(--accent, #00FFFF); }
 `;
 
 export const StyledInput = styled.input`
   flex-grow: 1;
-  padding: 12px 16px;
-  font-family: var(--font-secondary, "VT323", monospace);
-  font-size: 20px;
-  letter-spacing: 1px;
-  background: var(--input-background, #000000);
-  color: var(--input-text, #00ff00);
+  padding: 10px 14px;
+  font-family: var(--font-primary, "Press Start 2P", cursive);
+  font-size: 10px;
+  letter-spacing: 0.5px;
+  background: var(--input-background, #ffffff);
+  color: var(--input-text, #000000);
   border: 3px solid;
   border-color: var(--button-border-dark, #808080)
     var(--button-border-light, #ffffff) var(--button-border-light, #ffffff)
     var(--button-border-dark, #808080);
-  box-shadow: inset 2px 2px 8px rgba(0, 0, 0, 0.8);
+  box-shadow: inset 2px 2px 4px rgba(0, 0, 0, 0.2);
   outline: none;
   text-transform: uppercase;
-  transition: background 0.3s, color 0.3s, border-color 0.3s;
-
-  /* CRT monitor text glow */
-  text-shadow: 0 0 5px var(--glow-color, rgba(0, 255, 0, 0.5));
+  transition: all 0.2s;
 
   &::placeholder {
-    color: var(--input-placeholder, #008800);
-    text-shadow: 0 0 3px var(--input-placeholder, #008800);
+    color: var(--input-placeholder, #808080);
+    font-size: 9px;
   }
 
   &:focus {
-    background: var(--input-background, #001100);
-    box-shadow: inset 2px 2px 8px rgba(0, 0, 0, 0.8),
-      0 0 10px var(--glow-color, rgba(0, 255, 0, 0.3));
-    animation: ${cursorBlink} 1s infinite;
+    background: var(--input-background, #ffffcc);
+    animation: ${focusGlow} 2s ease-in-out infinite;
   }
 
   /* Selection styling */
   &::selection {
-    background: var(--primary, #00ff00);
-    color: var(--window-background, #000000);
+    background: var(--primary, #000080);
+    color: #ffffff;
   }
 
   @media (max-width: 400px) {
     margin-bottom: 0;
-    font-size: 18px;
+    font-size: 9px;
     padding: 10px 12px;
+
+    &::placeholder {
+      font-size: 8px;
+    }
   }
 `;

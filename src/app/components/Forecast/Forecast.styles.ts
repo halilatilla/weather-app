@@ -11,17 +11,20 @@ const shimmer = keyframes`
 `;
 
 export const ForecastContainer = styled.div`
-  margin-top: 24px;
+  margin-top: 20px;
   width: 100%;
 `;
 
 export const ForecastTitle = styled.h3`
-  font-family: "Press Start 2P", cursive;
-  font-size: 14px;
-  color: #00ffff;
-  text-shadow: 2px 2px 0 #000, 0 0 10px #00ffff;
-  margin-bottom: 16px;
+  font-family: var(--font-primary, "Press Start 2P", cursive);
+  font-size: 12px;
+  color: var(--accent, #00ffff);
+  text-shadow: 2px 2px 0 rgba(0, 0, 0, 0.9), 0 0 10px var(--accent, #00ffff),
+    1px 1px 2px rgba(0, 0, 0, 0.8);
+  margin-bottom: 12px;
   text-align: center;
+  -webkit-text-stroke: 0.5px rgba(0, 0, 0, 0.6);
+  text-stroke: 0.5px rgba(0, 0, 0, 0.6);
 
   &::before {
     content: "📁 ";
@@ -32,42 +35,49 @@ export const ForecastTitle = styled.h3`
   }
 
   @media (max-width: 650px) {
-    font-size: 11px;
+    font-size: 10px;
+    margin-bottom: 10px;
   }
 `;
 
 export const ForecastGrid = styled.div`
   display: flex;
-  gap: 12px;
+  gap: 16px;
   overflow-x: auto;
-  padding: 10px 5px;
+  padding: 8px 4px 12px;
   scroll-snap-type: x mandatory;
+  justify-content: center;
 
-  /* Retro scrollbar */
+  /* Hide scrollbar but keep functionality */
+  scrollbar-width: thin;
+
   &::-webkit-scrollbar {
-    height: 16px;
+    height: 8px;
   }
 
   &::-webkit-scrollbar-track {
-    background: #c0c0c0;
-    border: 2px solid;
-    border-color: #808080 #ffffff #ffffff #808080;
+    background: var(--window-background, #c0c0c0);
+    border-radius: 4px;
   }
 
   &::-webkit-scrollbar-thumb {
-    background: #c0c0c0;
-    border: 2px solid;
-    border-color: #ffffff #808080 #808080 #ffffff;
+    background: var(--window-border-dark, #808080);
+    border-radius: 4px;
 
     &:hover {
-      background: #a0a0a0;
+      background: var(--text-secondary, #666);
     }
+  }
+
+  @media (max-width: 650px) {
+    gap: 12px;
+    justify-content: flex-start;
   }
 `;
 
 export const FloppyDisk = styled.div<{ $delay: number }>`
-  min-width: 120px;
-  height: 140px;
+  min-width: 100px;
+  height: 120px;
   background: linear-gradient(180deg, #2a2a2a 0%, #1a1a1a 100%);
   border: 3px solid #444;
   border-radius: 4px 4px 8px 8px;
@@ -78,16 +88,17 @@ export const FloppyDisk = styled.div<{ $delay: number }>`
   animation-delay: ${({ $delay }) => $delay * 0.1}s;
   animation-fill-mode: backwards;
   scroll-snap-align: start;
+  flex-shrink: 0;
 
   /* Metal slider */
   &::before {
     content: "";
     position: absolute;
-    top: 8px;
+    top: 6px;
     left: 50%;
     transform: translateX(-50%);
     width: 70%;
-    height: 35px;
+    height: 28px;
     background: linear-gradient(180deg, #888 0%, #666 50%, #888 100%);
     border: 2px solid #555;
     border-radius: 2px;
@@ -97,26 +108,27 @@ export const FloppyDisk = styled.div<{ $delay: number }>`
   &::after {
     content: "";
     position: absolute;
-    bottom: 10px;
+    bottom: 8px;
     left: 50%;
     transform: translateX(-50%);
     width: 80%;
-    height: 50px;
+    height: 42px;
     background: #f5f5dc;
     border: 1px solid #ccc;
   }
 
   &:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 8px 20px rgba(0, 255, 255, 0.3);
+    transform: translateY(-4px);
+    box-shadow: 0 6px 16px var(--glow-color, rgba(0, 255, 255, 0.3));
   }
 
   @media (max-width: 650px) {
-    min-width: 100px;
-    height: 120px;
+    min-width: 85px;
+    height: 105px;
 
     &::before {
-      height: 28px;
+      height: 22px;
+      top: 5px;
     }
 
     &::after {
@@ -148,8 +160,9 @@ export const DiskLabel = styled.div`
 export const DayName = styled.span`
   font-family: "Press Start 2P", cursive;
   font-size: 7px;
-  color: #333;
+  color: #1a1a1a;
   text-transform: uppercase;
+  text-shadow: 0 0 1px rgba(0, 0, 0, 0.3);
 
   @media (max-width: 650px) {
     font-size: 6px;

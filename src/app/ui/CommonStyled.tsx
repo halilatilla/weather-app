@@ -180,7 +180,7 @@ export const WindowButton = styled.button`
 `;
 
 export const WindowContent = styled.div`
-  padding: 1.5rem;
+  padding: 1.25rem;
   background: var(--content-background, #c0c0c0);
   transition: background 0.3s;
 
@@ -192,24 +192,25 @@ export const WindowContent = styled.div`
 export const Title = styled.h1`
   text-align: center;
   color: var(--text-accent, #000080);
-  margin-bottom: 1.5rem;
-  font-size: 1.5rem;
+  margin-bottom: 1rem;
+  font-size: 1.25rem;
   font-family: var(--font-primary, "Press Start 2P", cursive);
   text-shadow: var(--text-shadow, 2px 2px 0 #ff00ff, 4px 4px 0 #00ffff);
   letter-spacing: 2px;
   transition: color 0.3s, text-shadow 0.3s;
 
   @media (max-width: 600px) {
-    font-size: 1rem;
+    font-size: 0.9rem;
+    margin-bottom: 0.75rem;
   }
 `;
 
 export const SearchContainer = styled.div`
   display: flex;
-  margin-bottom: 1.5rem;
-  gap: 4px;
+  margin-bottom: 1rem;
+  gap: 6px;
 
-  @media (max-width: 400px) {
+  @media (max-width: 450px) {
     flex-direction: column;
     gap: 8px;
   }
