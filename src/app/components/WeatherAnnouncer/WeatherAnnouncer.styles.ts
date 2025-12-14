@@ -121,16 +121,14 @@ export const StudioContainer = styled.div<{ $isMinimized?: boolean }>`
   position: fixed;
   bottom: 20px;
   left: 20px;
-  width: ${({ $isMinimized }) => $isMinimized ? '200px' : '500px'};
-  height: ${({ $isMinimized }) => $isMinimized ? '50px' : '340px'};
+  width: ${({ $isMinimized }) => ($isMinimized ? "200px" : "500px")};
+  height: ${({ $isMinimized }) => ($isMinimized ? "50px" : "340px")};
   background: linear-gradient(180deg, #1a1a3e 0%, #0d0d2b 50%, #0a0a20 100%);
   border: 4px solid #333366;
   border-radius: 8px;
   overflow: hidden;
   z-index: 100;
-  box-shadow: 
-    0 0 20px rgba(0, 0, 0, 0.8),
-    inset 0 0 30px rgba(0, 100, 200, 0.1),
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.8), inset 0 0 30px rgba(0, 100, 200, 0.1),
     8px 8px 0px 0px rgba(0, 0, 0, 0.3);
   animation: ${crtFlicker} 4s ease-in-out infinite;
   transition: all 0.3s ease-in-out;
@@ -173,21 +171,22 @@ export const StudioContainer = styled.div<{ $isMinimized?: boolean }>`
   }
 
   @media (max-width: 1200px) {
-    width: ${({ $isMinimized }) => $isMinimized ? '180px' : '420px'};
-    height: ${({ $isMinimized }) => $isMinimized ? '45px' : '300px'};
+    width: ${({ $isMinimized }) => ($isMinimized ? "180px" : "420px")};
+    height: ${({ $isMinimized }) => ($isMinimized ? "45px" : "300px")};
   }
 
   @media (max-width: 900px) {
-    width: ${({ $isMinimized }) => $isMinimized ? '160px' : '350px'};
-    height: ${({ $isMinimized }) => $isMinimized ? '40px' : '280px'};
+    width: ${({ $isMinimized }) => ($isMinimized ? "160px" : "350px")};
+    height: ${({ $isMinimized }) => ($isMinimized ? "40px" : "280px")};
     bottom: 10px;
     left: 10px;
   }
 
   @media (max-width: 650px) {
     /* On mobile, hide when minimized, show compact version when expanded */
-    width: ${({ $isMinimized }) => $isMinimized ? '140px' : 'calc(100% - 20px)'};
-    height: ${({ $isMinimized }) => $isMinimized ? '40px' : '320px'};
+    width: ${({ $isMinimized }) =>
+      $isMinimized ? "140px" : "calc(100% - 20px)"};
+    height: ${({ $isMinimized }) => ($isMinimized ? "40px" : "320px")};
     left: 10px;
     right: 10px;
     bottom: 10px;
@@ -201,12 +200,12 @@ export const ToggleButton = styled.button`
   right: 8px;
   width: 28px;
   height: 28px;
-  background: #CC0000;
+  background: #cc0000;
   border: 3px solid;
-  border-color: #FF6666 #660000 #660000 #FF6666;
+  border-color: #ff6666 #660000 #660000 #ff6666;
   border-radius: 4px;
-  color: #FFFFFF;
-  font-family: 'Press Start 2P', cursive;
+  color: #ffffff;
+  font-family: "Press Start 2P", cursive;
   font-size: 10px;
   cursor: pointer;
   z-index: 20;
@@ -216,11 +215,11 @@ export const ToggleButton = styled.button`
   transition: all 0.1s;
 
   &:hover {
-    background: #FF0000;
+    background: #ff0000;
   }
 
   &:active {
-    border-color: #660000 #FF6666 #FF6666 #660000;
+    border-color: #660000 #ff6666 #ff6666 #660000;
   }
 
   @media (max-width: 900px) {
@@ -237,10 +236,10 @@ export const MinimizedContent = styled.div`
   justify-content: flex-start;
   height: 100%;
   padding: 0 45px 0 15px;
-  font-family: 'Press Start 2P', cursive;
+  font-family: "Press Start 2P", cursive;
   font-size: 10px;
-  color: #00FF00;
-  text-shadow: 0 0 5px #00FF00;
+  color: #00ff00;
+  text-shadow: 0 0 5px #00ff00;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -261,16 +260,16 @@ export const LiveIndicator = styled.div`
   align-items: center;
   gap: 8px;
   z-index: 5;
-  font-family: 'Press Start 2P', cursive;
+  font-family: "Press Start 2P", cursive;
   font-size: 12px;
-  color: #FF0000;
-  text-shadow: 0 0 10px #FF0000;
+  color: #ff0000;
+  text-shadow: 0 0 10px #ff0000;
 `;
 
 export const LiveDot = styled.div`
   width: 14px;
   height: 14px;
-  background: #FF0000;
+  background: #ff0000;
   border-radius: 50%;
   animation: ${livePulse} 1s ease-in-out infinite;
 `;
@@ -287,20 +286,15 @@ export const StudioBackground = styled.div`
   left: 0;
   right: 0;
   bottom: 60px;
-  background: linear-gradient(
-    180deg,
-    #2a2a5e 0%,
-    #1a1a4e 40%,
-    #151540 100%
-  );
+  background: linear-gradient(180deg, #2a2a5e 0%, #1a1a4e 40%, #151540 100%);
   overflow: hidden;
 `;
 
 // Studio lights
-export const StudioLight = styled.div<{ $position: 'left' | 'right' }>`
+export const StudioLight = styled.div<{ $position: "left" | "right" }>`
   position: absolute;
   top: 10px;
-  ${({ $position }) => $position === 'left' ? 'left: 15px;' : 'right: 15px;'}
+  ${({ $position }) => ($position === "left" ? "left: 15px;" : "right: 15px;")}
   width: 25px;
   height: 40px;
 
@@ -328,7 +322,8 @@ export const StudioLight = styled.div<{ $position: 'left' | 'right' }>`
     border-right: 30px solid transparent;
     border-top: 60px solid rgba(255, 255, 200, 0.08);
     animation: ${studioLightGlow} 2s ease-in-out infinite;
-    ${({ $position }) => $position === 'right' ? 'animation-delay: 0.5s;' : ''}
+    ${({ $position }) =>
+      $position === "right" ? "animation-delay: 0.5s;" : ""}
   }
 `;
 
@@ -342,15 +337,14 @@ export const NewsDesk = styled.div`
   height: 65px;
   background: linear-gradient(
     180deg,
-    #8B4513 0%,
+    #8b4513 0%,
     #654321 20%,
-    #5D3A1A 50%,
-    #4A2F15 100%
+    #5d3a1a 50%,
+    #4a2f15 100%
   );
-  border-top: 4px solid #A0522D;
-  border-bottom: 3px solid #3D2512;
-  box-shadow: 
-    inset 0 3px 6px rgba(255, 255, 255, 0.1),
+  border-top: 4px solid #a0522d;
+  border-bottom: 3px solid #3d2512;
+  box-shadow: inset 0 3px 6px rgba(255, 255, 255, 0.1),
     0 -5px 15px rgba(0, 0, 0, 0.5);
 
   /* Wood grain texture */
@@ -377,12 +371,10 @@ export const NewsDesk = styled.div`
     left: 20px;
     top: 50%;
     transform: translateY(-50%);
-    font-family: 'Press Start 2P', cursive;
+    font-family: "Press Start 2P", cursive;
     font-size: 14px;
-    color: #FFD700;
-    text-shadow: 
-      2px 2px 0 #8B0000,
-      0 0 10px #FFD700;
+    color: #ffd700;
+    text-shadow: 2px 2px 0 #8b0000, 0 0 10px #ffd700;
     letter-spacing: 2px;
   }
 
@@ -409,13 +401,7 @@ export const Microphone = styled.div`
     position: absolute;
     width: 18px;
     height: 24px;
-    background: linear-gradient(
-      90deg,
-      #888 0%,
-      #CCC 30%,
-      #999 60%,
-      #777 100%
-    );
+    background: linear-gradient(90deg, #888 0%, #ccc 30%, #999 60%, #777 100%);
     border-radius: 10px 10px 5px 5px;
     border: 3px solid #555;
     bottom: 0;
@@ -479,10 +465,10 @@ export const Head = styled.div`
   position: absolute;
   width: 52px;
   height: 46px;
-  background: #E8C4A0;
+  background: #e8c4a0;
   left: 50%;
   top: 0;
-  border: 3px solid #B8956A;
+  border: 3px solid #b8956a;
   animation: ${headBob} 4s ease-in-out infinite;
   /* Note: translateX(-50%) is included in the headBob animation keyframes */
 
@@ -494,8 +480,8 @@ export const Head = styled.div`
     left: -5px;
     right: -5px;
     height: 18px;
-    background: #5D4037;
-    border: 3px solid #3E2723;
+    background: #5d4037;
+    border: 3px solid #3e2723;
     border-bottom: none;
     border-radius: 6px 6px 0 0;
   }
@@ -535,12 +521,13 @@ export const Face = styled.div<{ $isTalking?: boolean }>`
     position: absolute;
     width: 14px;
     height: 4px;
-    background: #C17A6A;
+    background: #c17a6a;
     border-radius: 0 0 6px 6px;
     bottom: 2px;
     left: 50%;
     transform: translateX(-50%);
-    animation: ${({ $isTalking }) => $isTalking ? mouthTalk : 'none'} 0.6s ease-in-out infinite;
+    animation: ${({ $isTalking }) => ($isTalking ? mouthTalk : "none")} 0.6s
+      ease-in-out infinite;
   }
 
   @media (max-width: 650px) {
@@ -562,8 +549,8 @@ export const Body = styled.div`
   transform: translateX(-50%);
   width: 80px;
   height: 58px;
-  background: #3F51B5;
-  border: 3px solid #1A237E;
+  background: #3f51b5;
+  border: 3px solid #1a237e;
   border-radius: 6px 6px 0 0;
 
   /* Suit collar/lapels */
@@ -576,12 +563,12 @@ export const Body = styled.div`
     height: 16px;
     background: linear-gradient(
       90deg,
-      #1A237E 0%,
-      #1A237E 25%,
+      #1a237e 0%,
+      #1a237e 25%,
       transparent 25%,
       transparent 75%,
-      #1A237E 75%,
-      #1A237E 100%
+      #1a237e 75%,
+      #1a237e 100%
     );
   }
 
@@ -594,7 +581,7 @@ export const Body = styled.div`
     transform: translateX(-50%);
     width: 22px;
     height: 20px;
-    background: #FFFFFF;
+    background: #ffffff;
   }
 
   @media (max-width: 650px) {
@@ -612,10 +599,10 @@ export const Tie = styled.div`
   transform: translateX(-50%);
   width: 14px;
   height: 36px;
-  background: #D32F2F;
+  background: #d32f2f;
   clip-path: polygon(30% 0, 70% 0, 100% 15%, 65% 100%, 35% 100%, 0% 15%);
   z-index: 1;
-  border: 2px solid #B71C1C;
+  border: 2px solid #b71c1c;
 
   @media (max-width: 650px) {
     width: 12px;
@@ -639,8 +626,8 @@ export const Arms = styled.div`
     position: absolute;
     width: 18px;
     height: 40px;
-    background: #3F51B5;
-    border: 3px solid #1A237E;
+    background: #3f51b5;
+    border: 3px solid #1a237e;
     left: 0;
     top: 0;
     border-radius: 0 0 6px 6px;
@@ -652,8 +639,8 @@ export const Arms = styled.div`
     position: absolute;
     width: 18px;
     height: 40px;
-    background: #3F51B5;
-    border: 3px solid #1A237E;
+    background: #3f51b5;
+    border: 3px solid #1a237e;
     right: 0;
     top: 0;
     border-radius: 0 0 6px 6px;
@@ -663,7 +650,8 @@ export const Arms = styled.div`
     width: 88px;
     height: 38px;
     top: 52px;
-    &::before, &::after {
+    &::before,
+    &::after {
       width: 15px;
       height: 34px;
     }
@@ -685,8 +673,8 @@ export const Hands = styled.div`
     position: absolute;
     width: 16px;
     height: 14px;
-    background: #E8C4A0;
-    border: 3px solid #B8956A;
+    background: #e8c4a0;
+    border: 3px solid #b8956a;
     border-radius: 4px;
     left: 6px;
     top: 0;
@@ -698,8 +686,8 @@ export const Hands = styled.div`
     position: absolute;
     width: 16px;
     height: 14px;
-    background: #E8C4A0;
-    border: 3px solid #B8956A;
+    background: #e8c4a0;
+    border: 3px solid #b8956a;
     border-radius: 4px;
     right: 6px;
     top: 0;
@@ -708,7 +696,8 @@ export const Hands = styled.div`
   @media (max-width: 650px) {
     top: 82px;
     width: 80px;
-    &::before, &::after {
+    &::before,
+    &::after {
       width: 14px;
       height: 12px;
     }
@@ -723,8 +712,8 @@ export const Paper = styled.div`
   transform: translateX(-50%);
   width: 48px;
   height: 34px;
-  background: #FFFDE7;
-  border: 3px solid #FBC02D;
+  background: #fffde7;
+  border: 3px solid #fbc02d;
   z-index: 1;
   animation: ${paperHold} 3s ease-in-out infinite;
 
@@ -736,10 +725,8 @@ export const Paper = styled.div`
     left: 5px;
     right: 5px;
     height: 3px;
-    background: #90CAF9;
-    box-shadow: 
-      0 7px 0 #90CAF9,
-      0 14px 0 #90CAF9;
+    background: #90caf9;
+    box-shadow: 0 7px 0 #90caf9, 0 14px 0 #90caf9;
   }
 
   @media (max-width: 650px) {
@@ -758,7 +745,7 @@ export const NewsTicker = styled.div`
   right: 0;
   height: 70px;
   background: linear-gradient(180deg, #1a1a1a 0%, #0d0d0d 100%);
-  border-top: 4px solid #FF0000;
+  border-top: 4px solid #ff0000;
   overflow: hidden;
   z-index: 4;
 
@@ -773,16 +760,16 @@ export const TickerLabel = styled.div`
   top: 0;
   bottom: 0;
   width: 100px;
-  background: linear-gradient(90deg, #CC0000, #990000);
+  background: linear-gradient(90deg, #cc0000, #990000);
   display: flex;
   align-items: center;
   justify-content: center;
-  font-family: 'Press Start 2P', cursive;
+  font-family: "Press Start 2P", cursive;
   font-size: 10px;
-  color: #FFFFFF;
+  color: #ffffff;
   text-shadow: 2px 2px 0 #000;
   z-index: 2;
-  border-right: 3px solid #FF0000;
+  border-right: 3px solid #ff0000;
 
   &::after {
     content: "";
@@ -817,9 +804,9 @@ export const TickerContent = styled.div`
 `;
 
 export const TickerText = styled.div`
-  font-family: 'Press Start 2P', cursive;
+  font-family: "Press Start 2P", cursive;
   font-size: 10px;
-  color: #FFFFFF;
+  color: #ffffff;
   white-space: nowrap;
   animation: ${tickerScroll} 20s linear infinite;
   text-shadow: 0 0 5px rgba(255, 255, 255, 0.5);
@@ -833,37 +820,41 @@ export const TickerText = styled.div`
 
 export const SpeechBubbleContainer = styled.div`
   position: absolute;
-  top: 30px;
-  right: 25px;
-  left: 180px;
+  top: 20px;
+  right: 20px;
+  left: 160px;
   z-index: 5;
 
-  @media (max-width: 650px) {
+  @media (max-width: 900px) {
     left: 140px;
     right: 15px;
+  }
+
+  @media (max-width: 650px) {
+    left: 120px;
+    right: 10px;
+    top: 15px;
   }
 `;
 
 export const SpeechBubble = styled.div`
-  background: #FFFFFF;
+  background: #ffffff;
   position: relative;
-  padding: 18px 20px;
+  padding: 16px 18px;
   animation: ${bubbleAppear} 0.3s ease-out;
   image-rendering: pixelated;
-  
+  max-height: 180px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+
   /* Chunky pixel border - multiple layers for thickness */
   border: 5px solid #000000;
   box-shadow:
-    /* Outer black border pixels */
-    -5px 0 0 0 #000000,
-    5px 0 0 0 #000000,
-    0 -5px 0 0 #000000,
-    0 5px 0 0 #000000,
-    /* Corner pixels */
-    -5px -5px 0 0 #000000,
-    5px -5px 0 0 #000000,
-    -5px 5px 0 0 #000000,
-    5px 5px 0 0 #000000;
+    /* Outer black border pixels */ -5px 0 0 0 #000000,
+    5px 0 0 0 #000000, 0 -5px 0 0 #000000, 0 5px 0 0 #000000,
+    /* Corner pixels */ -5px -5px 0 0 #000000, 5px -5px 0 0 #000000,
+    -5px 5px 0 0 #000000, 5px 5px 0 0 #000000;
 
   /* Speech bubble tail - pixel art triangle pointing to character */
   &::before {
@@ -889,16 +880,17 @@ export const SpeechBubble = styled.div`
     /* Inner white triangle */
     border-top: 9px solid transparent;
     border-bottom: 9px solid transparent;
-    border-right: 16px solid #FFFFFF;
+    border-right: 16px solid #ffffff;
   }
 
   @media (max-width: 650px) {
-    padding: 14px 16px;
+    padding: 12px 14px;
+    max-height: 160px;
   }
 `;
 
 export const BubbleHeader = styled.div`
-  font-family: 'Press Start 2P', cursive;
+  font-family: "Press Start 2P", cursive;
   font-size: 10px;
   color: #000080;
   margin-bottom: 12px;
@@ -924,18 +916,42 @@ export const WeatherEmoji = styled.span`
 `;
 
 export const BubbleText = styled.p<{ $isTyping?: boolean }>`
-  font-family: 'Press Start 2P', cursive;
+  font-family: "Press Start 2P", cursive;
   font-size: 10px;
   line-height: 2;
   color: #000000;
   margin: 0;
-  
+  flex: 1;
+  overflow-y: auto;
+  padding-right: 5px;
+
   /* Blinking cursor - only show while typing */
   &::after {
-    content: "${({ $isTyping }) => $isTyping ? '▌' : ''}";
-    animation: ${({ $isTyping }) => $isTyping ? cursorBlink : 'none'} 0.8s step-end infinite;
+    content: "${({ $isTyping }) => ($isTyping ? "▌" : "")}";
+    animation: ${({ $isTyping }) => ($isTyping ? cursorBlink : "none")} 0.8s
+      step-end infinite;
     margin-left: 2px;
     color: #000000;
+  }
+
+  /* Retro scrollbar styling */
+  &::-webkit-scrollbar {
+    width: 10px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: #c0c0c0;
+    border: 1px solid #808080;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: #808080;
+    border: 1px solid;
+    border-color: #ffffff #404040 #404040 #ffffff;
+  }
+
+  &::-webkit-scrollbar-thumb:hover {
+    background: #606060;
   }
 
   @media (max-width: 650px) {
@@ -966,13 +982,13 @@ export const WaitingMessage = styled.div`
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  font-family: 'Press Start 2P', cursive;
+  font-family: "Press Start 2P", cursive;
   font-size: 8px;
-  color: #00FFFF;
+  color: #00ffff;
   text-align: center;
-  text-shadow: 0 0 10px #00FFFF;
+  text-shadow: 0 0 10px #00ffff;
   z-index: 3;
-  
+
   span {
     display: block;
     margin-top: 8px;
