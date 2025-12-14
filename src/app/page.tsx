@@ -3,6 +3,7 @@
 import { useState, Suspense } from "react";
 import useGetWeatherByCityName from "./hooks/useGetWeatherByCityName";
 import Weather from "./components/Weather/Weather";
+import WeatherAnnouncer from "./components/WeatherAnnouncer";
 import Input from "./ui/Input/Input";
 import Button from "./ui/Button/Button";
 import {
@@ -85,6 +86,11 @@ export default function Home() {
           />
         </WindowContent>
       </Container>
+      <WeatherAnnouncer
+        weatherData={weatherData ?? null}
+        loading={isValidating}
+        isCelsius={true}
+      />
       <Suspense fallback={null}>
         <SearchParamsHandler onCityChange={setFetchCity} />
       </Suspense>

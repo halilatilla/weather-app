@@ -76,6 +76,7 @@ export const Container = styled.div`
   max-width: 650px;
   margin: 1rem;
   position: relative;
+  z-index: 1;
   animation: ${crtFlicker} 4s ease-in-out infinite;
 
   @media (max-width: 600px) {

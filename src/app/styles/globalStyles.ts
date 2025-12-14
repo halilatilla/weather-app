@@ -2,7 +2,7 @@ import { createGlobalStyle } from "styled-components";
 import { ThemeType } from "./theme";
 
 const GlobalStyle = createGlobalStyle<{ theme: ThemeType }>`
-  @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&display=swap');
+  /* Fonts loaded via <link> in layout.tsx - don't use @import in styled-components */
 
   * {
     box-sizing: border-box;
