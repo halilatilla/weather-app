@@ -7,20 +7,35 @@ const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
 });
 
+// Rate limit configuration
+const MINUTE_LIMIT = 10; // requests per minute
+const DAILY_LIMIT = parseInt(process.env.DAILY_API_LIMIT || "20", 10); // requests per day (default: 20)
+
 // Create rate limiter - 10 requests per user per minute
 // Uses Upstash Redis for persistent rate limiting (works with serverless)
 const ratelimit = process.env.UPSTASH_REDIS_REST_URL
   ? new Ratelimit({
       redis: Redis.fromEnv(),
-      limiter: Ratelimit.slidingWindow(10, "1 m"), // 10 requests per minute
+      limiter: Ratelimit.slidingWindow(MINUTE_LIMIT, "1 m"), // 10 requests per minute
+      analytics: true,
+    })
+  : null;
+
+// Create daily rate limiter - uses Upstash Redis for persistent daily tracking
+const dailyRatelimit = process.env.UPSTASH_REDIS_REST_URL
+  ? new Ratelimit({
+      redis: Redis.fromEnv(),
+      limiter: Ratelimit.slidingWindow(DAILY_LIMIT, "1 d"), // Daily limit
       analytics: true,
     })
   : null;
 
 // Simple in-memory fallback rate limiter (for development without Redis)
 const ipRequestCounts = new Map<string, { count: number; resetTime: number }>();
-const RATE_LIMIT = 10; // requests
 const RATE_WINDOW = 60 * 1000; // 1 minute in ms
+
+// In-memory daily tracking (for development without Redis)
+const ipDailyCounts = new Map<string, { count: number; resetTime: number }>();
 
 function checkInMemoryRateLimit(ip: string): {
   success: boolean;
@@ -31,15 +46,40 @@ function checkInMemoryRateLimit(ip: string): {
 
   if (!record || now > record.resetTime) {
     ipRequestCounts.set(ip, { count: 1, resetTime: now + RATE_WINDOW });
-    return { success: true, remaining: RATE_LIMIT - 1 };
+    return { success: true, remaining: MINUTE_LIMIT - 1 };
   }
 
-  if (record.count >= RATE_LIMIT) {
+  if (record.count >= MINUTE_LIMIT) {
     return { success: false, remaining: 0 };
   }
 
   record.count++;
-  return { success: true, remaining: RATE_LIMIT - record.count };
+  return { success: true, remaining: MINUTE_LIMIT - record.count };
+}
+
+function checkInMemoryDailyLimit(ip: string): {
+  success: boolean;
+  remaining: number;
+} {
+  const now = Date.now();
+  const record = ipDailyCounts.get(ip);
+
+  // Calculate reset time (start of next day)
+  const tomorrow = new Date(now);
+  tomorrow.setHours(24, 0, 0, 0);
+  const resetTime = tomorrow.getTime();
+
+  if (!record || now > record.resetTime) {
+    ipDailyCounts.set(ip, { count: 1, resetTime });
+    return { success: true, remaining: DAILY_LIMIT - 1 };
+  }
+
+  if (record.count >= DAILY_LIMIT) {
+    return { success: false, remaining: 0 };
+  }
+
+  record.count++;
+  return { success: true, remaining: DAILY_LIMIT - record.count };
 }
 
 // System prompt for our retro 90s weather announcer - Chat mode
@@ -100,7 +140,45 @@ export async function POST(request: NextRequest) {
       request.headers.get("x-real-ip") ??
       "anonymous";
 
-    // Check rate limit
+    // Check daily rate limit first
+    let dailyRateLimitResult: { success: boolean; remaining: number };
+
+    if (dailyRatelimit) {
+      // Use Upstash Redis daily rate limiter (production)
+      const result = await dailyRatelimit.limit(ip);
+      dailyRateLimitResult = {
+        success: result.success,
+        remaining: result.remaining,
+      };
+    } else {
+      // Use in-memory fallback (development)
+      dailyRateLimitResult = checkInMemoryDailyLimit(ip);
+    }
+
+    if (!dailyRateLimitResult.success) {
+      // Calculate time until reset (next day)
+      const now = Date.now();
+      const tomorrow = new Date(now);
+      tomorrow.setHours(24, 0, 0, 0);
+      const secondsUntilReset = Math.ceil((tomorrow.getTime() - now) / 1000);
+
+      return NextResponse.json(
+        {
+          error:
+            "Daily limit reached! You've used all your requests for today. Come back tomorrow! 🌅",
+        },
+        {
+          status: 429,
+          headers: {
+            "X-RateLimit-Remaining": "0",
+            "X-RateLimit-Limit": DAILY_LIMIT.toString(),
+            "Retry-After": secondsUntilReset.toString(),
+          },
+        }
+      );
+    }
+
+    // Check per-minute rate limit
     let rateLimitResult: { success: boolean; remaining: number };
 
     if (ratelimit) {
@@ -205,6 +283,9 @@ Current Weather Data:
       {
         headers: {
           "X-RateLimit-Remaining": rateLimitResult.remaining.toString(),
+          "X-RateLimit-Daily-Remaining":
+            dailyRateLimitResult.remaining.toString(),
+          "X-RateLimit-Daily-Limit": DAILY_LIMIT.toString(),
         },
       }
     );

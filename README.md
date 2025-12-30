@@ -27,7 +27,7 @@ A retro 90s-themed weather application built with Next.js, TypeScript, and style
   - 💬 **AI-Generated Weather Reports** - Automatic initial reports when weather loads
   - 🗣️ **Interactive Chat** - Ask Chip anything about the weather!
   - 🎯 Uses GPT-4o-mini for smart, contextual responses
-  - ⚡ Rate-limited to 10 requests/minute per user
+  - ⚡ Rate-limited to 10 requests/minute and 20 requests/day per user (configurable)
   - 📱 Minimizable widget that stays out of your way
   - 🎭 Animated pixel-art character with mouth movements
   - 💾 Static fallback messages when AI is unavailable
@@ -61,7 +61,7 @@ Chip is your friendly 90s-style TV weather announcer! This pixel-art character:
 - 💬 Announces weather updates with a typewriter effect
 - 🤖 **AI-Powered Chat** - Ask Chip anything about the weather!
 - 🎯 Uses GPT-4o-mini for smart, contextual responses
-- ⚡ Rate-limited to 10 requests/minute per user
+- ⚡ Rate-limited to 10 requests/minute and 100 requests/day per user (configurable)
 - 📱 Minimizable widget that stays out of your way
 - 🎭 Animated expressions and mouth movements
 - 📰 Live news ticker with weather updates
@@ -145,6 +145,7 @@ Before you begin, ensure you have met the following requirements:
    OPENAI_API_KEY=your_openai_api_key_here
    UPSTASH_REDIS_REST_URL=your_upstash_redis_url_here
    UPSTASH_REDIS_REST_TOKEN=your_upstash_redis_token_here
+   DAILY_API_LIMIT=20
    ```
 
    > **Note:**
@@ -152,6 +153,7 @@ Before you begin, ensure you have met the following requirements:
    - `OPENWEATHERMAP_API_KEY` is **required** for weather data
    - `OPENAI_API_KEY` is **optional** but recommended for AI features (Chip will use static messages if not provided)
    - `UPSTASH_REDIS_REST_URL` and `UPSTASH_REDIS_REST_TOKEN` are **optional** - without them, the app uses in-memory rate limiting (suitable for development)
+   - `DAILY_API_LIMIT` is **optional** - sets the daily API request limit per user (default: 20 requests/day)
 
 ## **Usage**
 
@@ -226,9 +228,12 @@ The AI chat feature uses OpenAI's GPT-4o-mini model to provide contextual weathe
 
 ### Rate Limiting
 
-- **Production:** Uses Upstash Redis with a sliding window (10 requests/minute per IP)
+- **Per-Minute Limit:** 10 requests per minute per IP (sliding window)
+- **Daily Limit:** 20 requests per day per IP (configurable via `DAILY_API_LIMIT` env variable)
+- **Production:** Uses Upstash Redis with sliding windows for both limits
 - **Development:** Falls back to in-memory rate limiting if Redis is not configured
 - **Fallback:** Static messages when AI is unavailable or rate-limited
+- **Headers:** Response includes `X-RateLimit-Remaining` (per-minute) and `X-RateLimit-Daily-Remaining` (daily) headers
 
 ## **Accessibility**
 
